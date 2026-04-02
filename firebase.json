@@ -11,11 +11,6 @@
         "source": "/",
         "destination": "/en/",
         "type": 302
-      },
-      {
-        "source": "/admin",
-        "destination": "/admin/",
-        "type": 301
       }
     ],
     "headers": [
@@ -47,7 +42,6 @@
         ]
       }
     ],
-    "cleanUrls": true,
-    "trailingSlash": false
+    "cleanUrls": true
   }
 }
