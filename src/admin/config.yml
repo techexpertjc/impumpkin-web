@@ -8,56 +8,44 @@ backend:
 media_folder: "src/uploads"
 public_folder: "/uploads"
 
-i18n:
-  structure: multiple_folders
-  locales: [en, vi]
-  default_locale: en
-
 slug:
   encoding: "ascii"
   clean_accents: true
 
 collections:
-  # --- Blog Posts ---
-  - name: "posts"
-    label: "Blog Posts"
-    folder: "src/{{locale}}/posts"
+  # --- Blog Posts (English) ---
+  - name: "posts_en"
+    label: "Blog Posts (English)"
+    folder: "src/en/posts"
     create: true
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
-    i18n: true
     sortable_fields: ["date", "title"]
     fields:
       - label: "Title"
         name: "title"
         widget: "string"
-        i18n: true
 
       - label: "Description"
         name: "description"
         widget: "text"
-        i18n: true
         hint: "Short summary for SEO and post cards (150-160 characters)"
 
       - label: "Date"
         name: "date"
         widget: "datetime"
-        i18n: duplicate
 
       - label: "Featured Image"
         name: "featuredImage"
         widget: "image"
-        i18n: duplicate
         required: true
 
       - label: "Featured Image Alt Text"
         name: "featuredImageAlt"
         widget: "string"
-        i18n: true
 
       - label: "Category"
         name: "category"
         widget: "select"
-        i18n: duplicate
         options:
           - { label: "Travel", value: "travel" }
           - { label: "Food", value: "food" }
@@ -68,19 +56,70 @@ collections:
       - label: "Tags"
         name: "tags"
         widget: "list"
-        i18n: true
 
       - label: "Featured"
         name: "featured"
         widget: "boolean"
         default: false
-        i18n: duplicate
         hint: "Show on homepage hero section?"
 
       - label: "Body"
         name: "body"
         widget: "markdown"
-        i18n: true
+
+  # --- Blog Posts (Vietnamese) ---
+  - name: "posts_vi"
+    label: "Blog Posts (Vietnamese)"
+    folder: "src/vi/posts"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    sortable_fields: ["date", "title"]
+    fields:
+      - label: "Title"
+        name: "title"
+        widget: "string"
+
+      - label: "Description"
+        name: "description"
+        widget: "text"
+        hint: "Short summary for SEO and post cards (150-160 characters)"
+
+      - label: "Date"
+        name: "date"
+        widget: "datetime"
+
+      - label: "Featured Image"
+        name: "featuredImage"
+        widget: "image"
+        required: true
+
+      - label: "Featured Image Alt Text"
+        name: "featuredImageAlt"
+        widget: "string"
+
+      - label: "Category"
+        name: "category"
+        widget: "select"
+        options:
+          - { label: "Travel", value: "travel" }
+          - { label: "Food", value: "food" }
+          - { label: "Culture", value: "culture" }
+          - { label: "Lifestyle", value: "lifestyle" }
+          - { label: "Tips", value: "tips" }
+
+      - label: "Tags"
+        name: "tags"
+        widget: "list"
+
+      - label: "Featured"
+        name: "featured"
+        widget: "boolean"
+        default: false
+        hint: "Show on homepage hero section?"
+
+      - label: "Body"
+        name: "body"
+        widget: "markdown"
 
   # --- Instagram Embeds ---
   - name: "instagram"
