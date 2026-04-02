@@ -3,6 +3,7 @@ backend:
   repo: techexpertjc/impumpkin-web
   branch: main
   base_url: https://impumpkin-web.netlify.app
+  site_domain: impumpkin-web.netlify.app
 
 # Local dev: when running `npm run dev`, the CMS auto-detects
 # the local proxy server and uses it instead of GitHub
