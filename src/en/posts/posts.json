@@ -1,0 +1,6 @@
+{
+  "layout": "layouts/post.njk",
+  "tags": "posts_en",
+  "locale": "en",
+  "permalink": "/en/posts/{{ page.fileSlug | slugify }}/index.html"
+}

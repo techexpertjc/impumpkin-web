@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}" dir="{{ dir }}">
+<head>
+  {% include "partials/seo.njk" %}
+  {% include "partials/jsonld.njk" %}
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="/assets/css/style.css">
+
+  <!-- Favicon -->
+  <link rel="icon" href="/assets/images/favicon.ico" sizes="any">
+</head>
+<body>
+  {% if heroParallax %}
+  <header class="parallax-hero">
+    <div class="parallax-bg" style="background-image: url('{{ heroBgImage or '/uploads/blog/hero-bg.jpg' }}');"></div>
+    <div class="parallax-content">
+      <p class="site-tagline">{{ site.tagline[locale] }}</p>
+      <h1 class="site-title"><a href="/{{ locale }}/">I'm Pumpkin</a></h1>
+      <div class="parallax-profile">
+        <img src="/uploads/blog/pumpkin-profile.avif" alt="{{ site.author }}" class="parallax-profile__img" loading="eager">
+      </div>
+    </div>
+  </header>
+  {% else %}
+  <header class="site-header">
+    <p class="site-tagline">{{ site.tagline[locale] }}</p>
+    <h1 class="site-title"><a href="/{{ locale }}/">I'm Pumpkin</a></h1>
+  </header>
+  {% endif %}
+
+  {% include "partials/nav.njk" %}
+
+  <main id="main-content">
+    {{ content | safe }}
+  </main>
+
+  {% include "partials/footer.njk" %}
+
+  <!-- Lightbox -->
+  <div class="lightbox-overlay" role="dialog" aria-label="Image lightbox">
+    <button class="lightbox-close" aria-label="Close">&times;</button>
+    <img src="" alt="">
+  </div>
+
+  <script src="/assets/js/main.js" defer></script>
+</body>
+</html>

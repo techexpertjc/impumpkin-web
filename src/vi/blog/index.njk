@@ -1,0 +1,31 @@
+---
+layout: layouts/base.njk
+title: "Blog"
+description: "Những câu chuyện du lịch, mẹo vặt và cuộc phiêu lưu khắp thế giới."
+permalink: /vi/blog/
+---
+
+<div class="blog-header">
+  <h1 class="blog-header__title">{{ i18n[locale].blog }}</h1>
+  <div class="blog-categories">
+    <a href="/{{ locale }}/blog/" class="active">{{ i18n[locale].allPosts }}</a>
+    <a href="/{{ locale }}/blog/?cat=travel">Du Lịch</a>
+    <a href="/{{ locale }}/blog/?cat=food">Ẩm Thực</a>
+    <a href="/{{ locale }}/blog/?cat=culture">Văn Hóa</a>
+    <a href="/{{ locale }}/blog/?cat=lifestyle">Phong Cách Sống</a>
+    <a href="/{{ locale }}/blog/?cat=tips">Mẹo Hay</a>
+  </div>
+</div>
+
+{% set posts = collections.posts_vi %}
+{% if posts.length > 0 %}
+  <div class="posts-grid">
+    {% for post in posts %}
+      {% include "partials/post-card.njk" %}
+    {% endfor %}
+  </div>
+{% else %}
+  <section class="section text-center">
+    <p>{{ i18n[locale].noPosts }}</p>
+  </section>
+{% endif %}

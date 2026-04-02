@@ -1,0 +1,55 @@
+---
+layout: layouts/base.njk
+title: "Home"
+description: "A travel blog by Ngọc Thái Thị Bảo — exploring the world one smile at a time."
+permalink: /en/
+heroParallax: true
+---
+
+{% set posts = collections.posts_en %}
+{% set featuredPosts = posts | getFeatured %}
+
+<!-- Featured Post -->
+{% if featuredPosts.length > 0 %}
+  {% set featured = featuredPosts[0] %}
+  <section class="hero">
+    <span class="hero-label">{{ i18n[locale].featuredPost }}</span>
+  </section>
+
+  <div class="featured-post">
+    <a href="{{ featured.url }}">
+      {% if featured.data.featuredImage %}
+        <img class="featured-post__image" src="{{ featured.data.featuredImage }}" alt="{{ featured.data.featuredImageAlt or featured.data.title }}" loading="eager">
+      {% endif %}
+    </a>
+    <div class="featured-post__meta">
+      <span class="featured-post__author">{{ site.author }}</span><br>
+      <time datetime="{{ featured.date | dateToISO }}">{{ featured.date | readableDate(locale) }}</time>
+    </div>
+    <h2 class="featured-post__title">
+      <a href="{{ featured.url }}">{{ featured.data.title }}</a>
+    </h2>
+    <p class="featured-post__excerpt">{{ featured.content | excerpt(300) }}</p>
+  </div>
+{% endif %}
+
+<div class="divider"></div>
+
+<!-- Latest Posts -->
+{% if posts.length > 0 %}
+  <section class="posts-section">
+    <div class="posts-section__header container">
+      <h2 class="posts-section__title">{{ i18n[locale].latestPosts }}</h2>
+      <a href="/{{ locale }}/blog/" class="posts-section__link">{{ i18n[locale].viewAll }} &rarr;</a>
+    </div>
+    <div class="posts-grid">
+      {% for post in posts | limit(6) %}
+        {% include "partials/post-card.njk" %}
+      {% endfor %}
+    </div>
+  </section>
+{% else %}
+  <section class="section text-center">
+    <p>{{ i18n[locale].noPosts }}</p>
+  </section>
+{% endif %}

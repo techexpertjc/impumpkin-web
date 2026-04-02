@@ -1,0 +1,7 @@
+_site/
+node_modules/
+.firebase/
+.env
+*.log
+.DS_Store
+Thumbs.db

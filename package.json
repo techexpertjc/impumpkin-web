@@ -1,0 +1,24 @@
+{
+  "name": "im-pumpkin-blog",
+  "version": "1.0.0",
+  "description": "I'm Pumpkin - A travel blog by Ngọc Thái Thị Bảo",
+  "type": "module",
+  "scripts": {
+    "start": "npx @11ty/eleventy --serve",
+    "build": "npx @11ty/eleventy",
+    "cms": "npx decap-server",
+    "dev": "concurrently \"npm run start\" \"npm run cms\""
+  },
+  "keywords": ["travel", "blog", "vietnam", "eleventy"],
+  "author": "Ngọc Thái Thị Bảo",
+  "license": "ISC",
+  "devDependencies": {
+    "@11ty/eleventy": "^3.1.5",
+    "@11ty/eleventy-img": "^4.0.2",
+    "@11ty/eleventy-plugin-rss": "^2.0.4",
+    "concurrently": "^8.2.2",
+    "decap-server": "^3.6.0",
+    "html-minifier-terser": "^7.2.0",
+    "luxon": "^3.7.2"
+  }
+}

@@ -1,0 +1,65 @@
+---
+layout: layouts/base.njk
+---
+<article>
+  <div class="post-header">
+    {% if category %}
+      <p class="post-header__category">{{ category }}</p>
+    {% endif %}
+    <h1 class="post-header__title">{{ title }}</h1>
+    <p class="post-header__meta">
+      <span>{{ site.author }}</span> &middot;
+      <time datetime="{{ date | dateToISO }}">{{ date | readableDate(locale) }}</time>
+    </p>
+  </div>
+
+  {% if featuredImage %}
+    <img class="post-hero-image" src="{{ featuredImage }}" alt="{{ featuredImageAlt or title }}" loading="eager">
+  {% endif %}
+
+  <div class="post-content">
+    {{ content | safe }}
+
+    {% if tags %}
+      <div class="post-tags">
+        {% for tag in tags %}
+          {% if tag !== "posts_en" and tag !== "posts_vi" %}
+            <a href="/{{ locale }}/blog/?tag={{ tag }}">{{ tag }}</a>
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <div class="post-share">
+      <span class="post-share__label">{{ i18n[locale].sharePost }}:</span>
+      <a href="https://twitter.com/intent/tweet?text={{ title | urlencode }}&url={{ site.url }}{{ page.url | urlencode }}" target="_blank" rel="noopener noreferrer" aria-label="Share on Twitter">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4l11.733 16h4.267l-11.733 -16z"/><path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772"/></svg>
+      </a>
+      <a href="https://www.facebook.com/sharer/sharer.php?u={{ site.url }}{{ page.url | urlencode }}" target="_blank" rel="noopener noreferrer" aria-label="Share on Facebook">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+      </a>
+    </div>
+  </div>
+</article>
+
+<!-- Related Posts -->
+{% set postCollection = collections["posts_" + locale] %}
+{% set relatedPosts = [] %}
+{% for post in postCollection %}
+  {% if post.url !== page.url and post.data.category === category %}
+    {% set relatedPosts = (relatedPosts.push(post), relatedPosts) %}
+  {% endif %}
+{% endfor %}
+
+{% if relatedPosts.length > 0 %}
+<section class="posts-section">
+  <div class="posts-section__header container">
+    <h2 class="posts-section__title">{{ i18n[locale].relatedPosts }}</h2>
+  </div>
+  <div class="posts-grid">
+    {% for post in relatedPosts | limit(3) %}
+      {% include "partials/post-card.njk" %}
+    {% endfor %}
+  </div>
+</section>
+{% endif %}

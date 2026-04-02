@@ -1,0 +1,31 @@
+---
+layout: layouts/base.njk
+title: "My Blog"
+description: "Travel stories, tips, and adventures from around the world."
+permalink: /en/blog/
+---
+
+<div class="blog-header">
+  <h1 class="blog-header__title">{{ i18n[locale].blog }}</h1>
+  <div class="blog-categories">
+    <a href="/{{ locale }}/blog/" class="active">{{ i18n[locale].allPosts }}</a>
+    <a href="/{{ locale }}/blog/?cat=travel">Travel</a>
+    <a href="/{{ locale }}/blog/?cat=food">Food</a>
+    <a href="/{{ locale }}/blog/?cat=culture">Culture</a>
+    <a href="/{{ locale }}/blog/?cat=lifestyle">Lifestyle</a>
+    <a href="/{{ locale }}/blog/?cat=tips">Tips</a>
+  </div>
+</div>
+
+{% set posts = collections.posts_en %}
+{% if posts.length > 0 %}
+  <div class="posts-grid">
+    {% for post in posts %}
+      {% include "partials/post-card.njk" %}
+    {% endfor %}
+  </div>
+{% else %}
+  <section class="section text-center">
+    <p>{{ i18n[locale].noPosts }}</p>
+  </section>
+{% endif %}

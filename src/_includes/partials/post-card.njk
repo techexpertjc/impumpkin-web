@@ -1,0 +1,15 @@
+<article class="post-card">
+  <a href="{{ post.url }}">
+    {% if post.data.featuredImage %}
+      <div class="post-card__image-wrapper">
+        <img class="post-card__image" src="{{ post.data.featuredImage }}" alt="{{ post.data.featuredImageAlt or post.data.title }}" loading="lazy">
+      </div>
+    {% endif %}
+    <div class="post-card__meta">
+      <span>{{ site.author }}</span> &middot;
+      <time datetime="{{ post.date | dateToISO }}">{{ post.date | readableDate(locale) }}</time>
+    </div>
+    <h3 class="post-card__title">{{ post.data.title }}</h3>
+    <p class="post-card__excerpt">{{ post.content | excerpt(150) }}</p>
+  </a>
+</article>

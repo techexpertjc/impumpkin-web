@@ -1,0 +1,27 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% if title %}{{ title }} | {{ site.title[locale] }}{% else %}{{ site.title[locale] }} - {{ site.description[locale] }}{% endif %}</title>
+<meta name="description" content="{{ description or site.description[locale] }}">
+<meta name="author" content="{{ site.author }}">
+<link rel="canonical" href="{{ site.url }}{{ page.url }}">
+
+<!-- Open Graph -->
+<meta property="og:title" content="{{ title or site.title[locale] }}">
+<meta property="og:description" content="{{ description or site.description[locale] }}">
+<meta property="og:image" content="{{ site.url }}{{ featuredImage or '/assets/images/og-default.jpg' }}">
+<meta property="og:url" content="{{ site.url }}{{ page.url }}">
+<meta property="og:type" content="{% if layout == 'layouts/post.njk' %}article{% else %}website{% endif %}">
+<meta property="og:locale" content="{{ locale }}">
+<meta property="og:site_name" content="I'm Pumpkin">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ title or site.title[locale] }}">
+<meta name="twitter:description" content="{{ description or site.description[locale] }}">
+<meta name="twitter:image" content="{{ site.url }}{{ featuredImage or '/assets/images/og-default.jpg' }}">
+
+<!-- Alternate language -->
+<link rel="alternate" hreflang="{{ lang }}" href="{{ site.url }}{{ page.url }}">
+{% set otherLocale = "vi" if locale == "en" else "en" %}
+<link rel="alternate" hreflang="{{ otherLocale }}" href="{{ site.url }}{{ page.url | localeUrl(otherLocale) }}">
+<link rel="alternate" hreflang="x-default" href="{{ site.url }}{{ page.url | localeUrl('en') }}">

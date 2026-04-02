@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <title>Content Manager - I'm Pumpkin</title>
+</head>
+<body>
+  <script>
+    // Manual init so we can override config for remote access
+    window.CMS_MANUAL_INIT = true;
+  </script>
+  <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+  <script>
+    // Remote access via ngrok/tunnels:
+    // 1. Run decap-server: npm run cms
+    // 2. Expose port 8081 via ngrok: ngrok http 8081
+    // 3. Set the ngrok URL below (e.g. "https://abcd-1234.ngrok-free.app")
+    // 4. Leave empty for normal localhost development
+    const REMOTE_BACKEND_URL = "";
+
+    if (REMOTE_BACKEND_URL) {
+      CMS.init({
+        config: {
+          backend: {
+            name: "proxy",
+            proxy_url: REMOTE_BACKEND_URL + "/api/v1",
+          },
+          local_backend: false,
+        },
+      });
+    } else {
+      CMS.init();
+    }
+  </script>
+</body>
+</html>

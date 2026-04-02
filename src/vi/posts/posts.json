@@ -1,0 +1,6 @@
+{
+  "layout": "layouts/post.njk",
+  "tags": "posts_vi",
+  "locale": "vi",
+  "permalink": "/vi/posts/{{ page.fileSlug | slugify }}/index.html"
+}

@@ -1,0 +1,71 @@
+<!-- Website Schema -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "I'm Pumpkin",
+  "url": "{{ site.url }}",
+  "author": {
+    "@type": "Person",
+    "name": "{{ site.author }}"
+  },
+  "inLanguage": ["en", "vi"]
+}
+</script>
+
+{% if layout == "layouts/post.njk" %}
+<!-- BlogPosting Schema -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "{{ title }}",
+  "description": "{{ description }}",
+  "image": "{{ site.url }}{{ featuredImage }}",
+  "datePublished": "{{ date | dateToISO }}",
+  "dateModified": "{{ date | dateToISO }}",
+  "author": {
+    "@type": "Person",
+    "name": "{{ site.author }}"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "I'm Pumpkin"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "{{ site.url }}{{ page.url }}"
+  },
+  "inLanguage": "{{ lang }}"
+}
+</script>
+{% endif %}
+
+<!-- BreadcrumbList Schema -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "{{ i18n[locale].home }}",
+      "item": "{{ site.url }}/{{ locale }}/"
+    }
+    {% if category %},
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "{{ i18n[locale].blog }}",
+      "item": "{{ site.url }}/{{ locale }}/blog/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "{{ title }}"
+    }
+    {% endif %}
+  ]
+}
+</script>
