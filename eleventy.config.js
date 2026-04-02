@@ -13,6 +13,9 @@ export default function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("src/uploads");
   eleventyConfig.addPassthroughCopy("src/admin");
 
+  // Exclude admin from template processing (copy as-is)
+  eleventyConfig.ignores.add("src/admin/**");
+
   // --- Date Filters ---
   eleventyConfig.addFilter("readableDate", (dateObj, locale = "en") => {
     const loc = locale === "vi" ? "vi" : "en";
