@@ -1,8 +1,11 @@
 backend:
-  name: git-gateway
+  name: github
+  repo: techexpertjc/impumpkin-web
   branch: main
+  base_url: https://impumpkin-web.netlify.app
 
-# For local development, uncomment the line below and run: npx decap-server
+# Local dev: when running `npm run dev`, the CMS auto-detects
+# the local proxy server and uses it instead of GitHub
 local_backend: true
 
 media_folder: "src/uploads"
