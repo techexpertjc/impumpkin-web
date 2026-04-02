@@ -126,6 +126,14 @@ collections:
           - { label: "Site Title", name: "title", widget: "string" }
           - { label: "Author Name", name: "author", widget: "string" }
           - { label: "Site URL", name: "url", widget: "string" }
+          - label: "Hero Background Image"
+            name: "heroImage"
+            widget: "image"
+            hint: "The parallax background image on the homepage"
+          - label: "Profile Picture"
+            name: "profileImage"
+            widget: "image"
+            hint: "Your profile photo (shown in hero section and About page)"
           - { label: "Instagram URL", name: "instagram", widget: "string" }
           - { label: "YouTube URL", name: "youtube", widget: "string" }
           - { label: "Facebook URL", name: "facebook", widget: "string" }

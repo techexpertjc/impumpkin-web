@@ -18,12 +18,12 @@
 <body>
   {% if heroParallax %}
   <header class="parallax-hero">
-    <div class="parallax-bg" style="background-image: url('{{ heroBgImage or '/uploads/blog/hero-bg.jpg' }}');"></div>
+    <div class="parallax-bg" style="background-image: url('{{ settings.heroImage or '/uploads/blog/hero-bg.jpg' }}');"></div>
     <div class="parallax-content">
       <p class="site-tagline">{{ site.tagline[locale] }}</p>
       <h1 class="site-title"><a href="/{{ locale }}/">I'm Pumpkin</a></h1>
       <div class="parallax-profile">
-        <img src="/uploads/blog/pumpkin-profile.avif" alt="{{ site.author }}" class="parallax-profile__img" loading="eager">
+        <img src="{{ settings.profileImage or '/uploads/blog/pumpkin-profile.avif' }}" alt="{{ site.author }}" class="parallax-profile__img" loading="eager">
       </div>
     </div>
   </header>
