@@ -5,10 +5,6 @@ backend:
   base_url: https://impumpkin-web.netlify.app
   auth_endpoint: .netlify/functions/auth
 
-# Local dev: when running `npm run dev`, the CMS auto-detects
-# the local proxy server and uses it instead of GitHub
-local_backend: true
-
 media_folder: "src/uploads"
 public_folder: "/uploads"
 

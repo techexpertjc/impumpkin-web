@@ -7,6 +7,17 @@
   <title>Content Manager - I'm Pumpkin</title>
 </head>
 <body>
+  <script>
+    // Enable local backend only on localhost
+    if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
+      window.CMS_MANUAL_INIT = true;
+    }
+  </script>
   <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+  <script>
+    if (window.CMS_MANUAL_INIT) {
+      CMS.init({ config: { local_backend: true } });
+    }
+  </script>
 </body>
 </html>
