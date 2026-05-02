@@ -9,7 +9,12 @@
     "cms": "npx decap-server",
     "dev": "concurrently \"npm run start\" \"npm run cms\""
   },
-  "keywords": ["travel", "blog", "vietnam", "eleventy"],
+  "keywords": [
+    "travel",
+    "blog",
+    "vietnam",
+    "eleventy"
+  ],
   "author": "Ngọc Thái Thị Bảo",
   "license": "ISC",
   "devDependencies": {

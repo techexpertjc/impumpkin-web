@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ lang }}" dir="{{ dir }}">
+<html lang="{{ lang }}" dir="{{ dir }}"{% if heroParallax %} class="snap-page"{% endif %}>
 <head>
   {% include "partials/seo.njk" %}
   {% include "partials/jsonld.njk" %}
@@ -14,20 +14,12 @@
 
   <!-- Favicon -->
   <link rel="icon" href="/assets/images/favicon.ico" sizes="any">
+
+  <!-- Fallback: ensure content visible if JS fails -->
+  <noscript><style>[data-animate]{opacity:1!important;transform:none!important}.parallax-content,.parallax-profile__img{opacity:1!important;transform:none!important}.snap-section{min-height:auto!important}</style></noscript>
 </head>
 <body>
-  {% if heroParallax %}
-  <header class="parallax-hero">
-    <div class="parallax-bg" style="background-image: url('{{ settings.heroImage or '/uploads/blog/hero-bg.jpg' }}');"></div>
-    <div class="parallax-content">
-      <p class="site-tagline">{{ site.tagline[locale] }}</p>
-      <h1 class="site-title"><a href="/{{ locale }}/">I'm Pumpkin</a></h1>
-      <div class="parallax-profile">
-        <img src="{{ settings.profileImage or '/uploads/blog/pumpkin-profile.avif' }}" alt="{{ site.author }}" class="parallax-profile__img" loading="eager">
-      </div>
-    </div>
-  </header>
-  {% else %}
+  {% if not heroParallax %}
   <header class="site-header">
     <p class="site-tagline">{{ site.tagline[locale] }}</p>
     <h1 class="site-title"><a href="/{{ locale }}/">I'm Pumpkin</a></h1>
@@ -40,7 +32,9 @@
     {{ content | safe }}
   </main>
 
+  {% if not heroParallax %}
   {% include "partials/footer.njk" %}
+  {% endif %}
 
   <!-- Lightbox -->
   <div class="lightbox-overlay" role="dialog" aria-label="Image lightbox">
@@ -48,6 +42,28 @@
     <img src="" alt="">
   </div>
 
+  {% if heroParallax %}
+  <!-- Instagram Chat Notification -->
+  <div class="ig-notif" id="ig-notif" role="complementary" aria-label="Instagram">
+    <button class="ig-notif__close" aria-label="Close notification">&times;</button>
+    <div class="ig-notif__bubble">
+      <img src="{{ settings.profileImage or '/uploads/blog/pumpkin-profile.avif' }}" alt="" class="ig-notif__avatar">
+      <div class="ig-notif__body">
+        <span class="ig-notif__name">Pumpkin</span>
+        <p class="ig-notif__msg">{{ i18n[locale].instagramCta }}</p>
+      </div>
+    </div>
+    <a href="{{ site.social.instagram }}" target="_blank" rel="noopener noreferrer" class="ig-notif__link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+      {{ i18n[locale].instagramFollow }} @impumpkin.02
+    </a>
+  </div>
+  {% endif %}
+
+  {% if heroParallax %}
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js" defer></script>
+  {% endif %}
   <script src="/assets/js/main.js" defer></script>
 </body>
 </html>
