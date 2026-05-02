@@ -12,7 +12,7 @@ description: About Bao Ngoc (Pumpkin) — Vietnamese social media marketer and t
 
     <div class="about-photo-col">
       <figure class="about-photo">
-        <img src="{{ site.author.photo }}" alt="{{ site.author.name }}" loading="eager">
+        <img src="{{ settings.profilePhoto or site.author.photo }}" alt="{{ site.author.name }}" loading="eager">
       </figure>
     </div>
 
@@ -44,11 +44,11 @@ description: About Bao Ngoc (Pumpkin) — Vietnamese social media marketer and t
         <div>
           <p class="meta-label">Find me on</p>
           <p class="meta-value">
-            <a href="{{ site.social.instagram.url }}" target="_blank" rel="noopener">Instagram</a>
+            <a href="{{ settings.instagram.url or site.social.instagram.url }}" target="_blank" rel="noopener">Instagram</a>
             <span>·</span>
-            <a href="{{ site.social.youtube.url }}" target="_blank" rel="noopener">YouTube</a>
+            <a href="{{ settings.youtube.url or site.social.youtube.url }}" target="_blank" rel="noopener">YouTube</a>
             <span>·</span>
-            <a href="{{ site.social.tiktok.url }}" target="_blank" rel="noopener">TikTok</a>
+            <a href="{{ settings.tiktok.url or site.social.tiktok.url }}" target="_blank" rel="noopener">TikTok</a>
           </p>
         </div>
       </div>

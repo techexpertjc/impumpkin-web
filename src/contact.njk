@@ -18,9 +18,9 @@ description: Get in touch with Bao Ngoc (Pumpkin) — collaborations, kind words
       <div class="contact-channels">
         <p>You can also reach me on:</p>
         <ul>
-          <li><a href="{{ site.social.instagram.url }}" target="_blank" rel="noopener">Instagram</a></li>
-          <li><a href="{{ site.social.youtube.url }}" target="_blank" rel="noopener">YouTube</a></li>
-          <li><a href="{{ site.social.tiktok.url }}" target="_blank" rel="noopener">TikTok</a></li>
+          <li><a href="{{ settings.instagram.url or site.social.instagram.url }}" target="_blank" rel="noopener">Instagram</a></li>
+          <li><a href="{{ settings.youtube.url or site.social.youtube.url }}" target="_blank" rel="noopener">YouTube</a></li>
+          <li><a href="{{ settings.tiktok.url or site.social.tiktok.url }}" target="_blank" rel="noopener">TikTok</a></li>
         </ul>
       </div>
     </div>

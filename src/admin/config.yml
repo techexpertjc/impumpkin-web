@@ -45,13 +45,8 @@ collections:
       - { label: "Hero Caption", name: "heroCaption", widget: "string", required: false }
       - { label: "Excerpt (1-2 sentences)", name: "excerpt", widget: "text", hint: "Shows on the home page and blog list." }
       - { label: "Excerpt (Vietnamese)", name: "excerpt_vi", widget: "text", required: false }
-      - label: "Map Position"
-        name: "mapPosition"
-        widget: "object"
-        hint: "Roughly where the pin appears on the world map. (See the world map at /blogs.)"
-        fields:
-          - { label: "X (0–1000)", name: "mapX", widget: "number", default: 500, min: 0, max: 1000 }
-          - { label: "Y (0–560)", name: "mapY", widget: "number", default: 280, min: 0, max: 560 }
+      - { label: "Map X (0–1000)", name: "mapX", widget: "number", default: 500, min: 0, max: 1000, hint: "Horizontal position on the world map at /blogs. 0 = left edge, 1000 = right edge." }
+      - { label: "Map Y (0–560)", name: "mapY", widget: "number", default: 280, min: 0, max: 560, hint: "Vertical position on the world map. 0 = top, 560 = bottom." }
       - { label: "GPS Coordinates", name: "coords", widget: "string", required: false, hint: "e.g. 32° 14′ N · 77° 11′ E" }
       - { label: "Tags", name: "tags", widget: "list", required: false, default: [] }
       - label: "Photo Gallery"
@@ -114,6 +109,8 @@ collections:
               - { label: "City skyline (modern)",   value: "city-skyline" }
               - { label: "Pagoda / temple skyline", value: "pagoda-skyline" }
               - { label: "Lighthouse on coast",     value: "lighthouse" }
+              - { label: "Buddha silhouette",      value: "buddha-sitting" }
+              - { label: "Tower / spire",           value: "tower" }
               # Underwater far
               - { label: "Manta ray (underwater)",       value: "manta-ray" }
               - { label: "Sea turtle (distant, underwater)", value: "sea-turtle-far" }
@@ -226,6 +223,34 @@ collections:
               - { label: "✨ Fireflies",          value: "fireflies" }
               - { label: "🫧 Rising bubbles (underwater)",   value: "bubbles" }
               - { label: "✦ Drifting plankton (underwater)", value: "particles" }
+
+  # ─── Site-wide settings (editable from the CMS sidebar) ───
+  - name: "settings"
+    label: "⚙️ Site Settings"
+    files:
+      - label: "Profile & General"
+        name: "general"
+        file: "src/_data/settings.json"
+        fields:
+          - { label: "Profile Photo", name: "profilePhoto", widget: "image", hint: "Your profile picture shown on the home page and about page." }
+          - label: "Instagram"
+            name: "instagram"
+            widget: "object"
+            fields:
+              - { label: "Handle", name: "handle", widget: "string", hint: "e.g. @pumpkin.travels" }
+              - { label: "URL", name: "url", widget: "string", hint: "e.g. https://instagram.com/pumpkin.travels" }
+          - label: "YouTube"
+            name: "youtube"
+            widget: "object"
+            fields:
+              - { label: "Handle", name: "handle", widget: "string", hint: "e.g. @pumpkintravels" }
+              - { label: "URL", name: "url", widget: "string", hint: "e.g. https://youtube.com/@pumpkintravels" }
+          - label: "TikTok"
+            name: "tiktok"
+            widget: "object"
+            fields:
+              - { label: "Handle", name: "handle", widget: "string", hint: "e.g. @pumpkin.travels" }
+              - { label: "URL", name: "url", widget: "string", hint: "e.g. https://tiktok.com/@pumpkin.travels" }
 
   # ─── Read-only message inbox would go here later if we want ───
   # For now, Pumpkin reads contact messages directly in the Firebase console.

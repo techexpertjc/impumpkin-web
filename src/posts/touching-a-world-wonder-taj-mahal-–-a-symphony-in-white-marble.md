@@ -20,9 +20,8 @@ excerpt_vi: Taj Mahal vẫn là điểm nhấn tuyệt vời nhất trong hành 
   kỷ xây dựng tỉ mỉ. Đối với một người như tôi, nó không chỉ đơn thuần là một
   công trình bằng đá cẩm thạch trắng, mà còn là một biểu tượng sâu sắc của tình
   yêu vĩnh cửu mà mọi người nên chiêm ngưỡng ít nhất một lần.
-mapPosition:
-  mapX: 500
-  mapY: 280
+mapX: 690
+mapY: 220
 tags: []
 gallery:
   - src: /assets/images/uploads/copy-of-copy-of-copy-of-black-and-white-modern-fashion-magazine-website-4-.png

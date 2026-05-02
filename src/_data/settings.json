@@ -1,0 +1,15 @@
+{
+  "profilePhoto": "/assets/images/profile/pumpkin-profile.avif",
+  "instagram": {
+    "handle": "@pumpkin.travels",
+    "url": "https://instagram.com/pumpkin.travels"
+  },
+  "youtube": {
+    "handle": "@pumpkintravels",
+    "url": "https://youtube.com/@pumpkintravels"
+  },
+  "tiktok": {
+    "handle": "@pumpkin.travels",
+    "url": "https://tiktok.com/@pumpkin.travels"
+  }
+}
