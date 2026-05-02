@@ -24,6 +24,8 @@ mapPosition:
   mapX: 500
   mapY: 280
 tags: []
+gallery:
+  - src: /assets/images/uploads/copy-of-copy-of-copy-of-black-and-white-modern-fashion-magazine-website-4-.png
 body_vi: >-
   **1. Taj Mahal – Nơi Tình Yêu Trở Thành Vĩnh Cửu**
 
