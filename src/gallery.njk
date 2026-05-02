@@ -1,0 +1,52 @@
+---
+layout: layouts/base.njk
+title: Gallery
+permalink: /gallery/
+bodyClass: page-gallery
+description: Photographs from Pumpkin's travels — Himachal Pradesh, Thailand, and beyond.
+---
+{%- set t = translations[locale or 'en'] -%}
+
+<section class="gallery-hero">
+  <div class="gallery-hero-inner">
+    <p class="page-eyebrow">— {{ t.galleryEyebrow }} —</p>
+    <h1 class="page-heading">{{ t.galleryHeading }}</h1>
+  </div>
+</section>
+
+<section class="gallery">
+  <div class="gallery-tabs">
+    <button class="gallery-tab is-active" data-tab="all">All</button>
+    {%- for post in collections.posts -%}
+      <button class="gallery-tab" data-tab="{{ post.fileSlug }}">{{ post.data.destination }}</button>
+    {%- endfor -%}
+  </div>
+
+  <div class="gallery-grid">
+    {%- for post in collections.posts -%}
+      {%- if post.data.gallery -%}
+        {%- for img in post.data.gallery -%}
+          <a class="gallery-item" data-tab="{{ post.fileSlug }}" href="{{ img.src }}" data-caption="{{ img.alt or post.data.destination }}">
+            <img src="{{ img.src }}" alt="{{ img.alt or post.data.destination }}" loading="lazy">
+            <figcaption>
+              <span>{{ post.data.destination }}</span>
+            </figcaption>
+          </a>
+        {%- endfor -%}
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+
+  <!-- Lightbox -->
+  <div class="lightbox" data-lightbox aria-hidden="true">
+    <button class="lightbox-close" aria-label="Close">×</button>
+    <button class="lightbox-prev" aria-label="Previous">‹</button>
+    <button class="lightbox-next" aria-label="Next">›</button>
+    <img class="lightbox-image" alt="">
+    <p class="lightbox-caption"></p>
+  </div>
+</section>
+
+{% block extraJs %}
+<script type="module" src="/assets/js/gallery.js"></script>
+{% endblock %}

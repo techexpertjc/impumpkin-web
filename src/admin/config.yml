@@ -1,0 +1,231 @@
+# Decap CMS configuration.
+# Docs: https://decapcms.org/docs/configuration-options/
+#
+# The `backend` block tells Decap where to save Pumpkin's posts.
+# We use the GitHub backend so posts get committed to the repo as markdown,
+# which then triggers a rebuild via GitHub Actions → Firebase Hosting.
+
+backend:
+  name: github
+  repo: techexpertjc/impumpkin-web   # same repo as old project
+  branch: main
+  base_url: https://impumpkin-web.netlify.app
+  auth_endpoint: .netlify/functions/auth
+
+# Where uploaded images go (relative to repo root)
+media_folder: "src/assets/images/uploads"
+public_folder: "/assets/images/uploads"
+
+# Show a clean "site URL" link in the CMS UI
+site_url: https://pumpkinblog.web.app
+display_url: https://pumpkinblog.web.app
+logo_url: /assets/images/logo.png
+
+# Open editorial workflow lets Pumpkin save drafts before publishing
+publish_mode: editorial_workflow
+
+collections:
+  - name: "posts"
+    label: "📝 Blog Posts"
+    label_singular: "Blog Post"
+    folder: "src/posts"
+    create: true
+    slug: "{{slug}}"
+    extension: "md"
+    format: "frontmatter"
+    summary: "{{title}} — {{destination}}, {{country}}"
+    fields:
+      - { label: "Title (English)", name: "title", widget: "string", hint: "The headline of the post." }
+      - { label: "Title (Vietnamese)", name: "title_vi", widget: "string", required: false, hint: "Optional Vietnamese version." }
+      - { label: "Destination (city/region)", name: "destination", widget: "string" }
+      - { label: "Country", name: "country", widget: "string" }
+      - { label: "Date", name: "date", widget: "datetime" }
+      - { label: "Featured on Home Page?", name: "featured", widget: "boolean", default: false, hint: "Pick up to 3 featured posts to show on the home page." }
+      - { label: "Hero Photo", name: "hero", widget: "image", hint: "Big photo at the top of the post." }
+      - { label: "Hero Caption", name: "heroCaption", widget: "string", required: false }
+      - { label: "Excerpt (1-2 sentences)", name: "excerpt", widget: "text", hint: "Shows on the home page and blog list." }
+      - { label: "Excerpt (Vietnamese)", name: "excerpt_vi", widget: "text", required: false }
+      - label: "Map Position"
+        name: "mapPosition"
+        widget: "object"
+        hint: "Roughly where the pin appears on the world map. (See the world map at /blogs.)"
+        fields:
+          - { label: "X (0–1000)", name: "mapX", widget: "number", default: 500, min: 0, max: 1000 }
+          - { label: "Y (0–560)", name: "mapY", widget: "number", default: 280, min: 0, max: 560 }
+      - { label: "GPS Coordinates", name: "coords", widget: "string", required: false, hint: "e.g. 32° 14′ N · 77° 11′ E" }
+      - { label: "Tags", name: "tags", widget: "list", required: false, default: [] }
+      - label: "Photo Gallery"
+        name: "gallery"
+        widget: "list"
+        required: false
+        fields:
+          - { label: "Image", name: "src", widget: "image" }
+          - { label: "Caption / Alt text", name: "alt", widget: "string", required: false }
+      - { label: "Body (English)", name: "body", widget: "markdown" }
+      - { label: "Body (Vietnamese)", name: "body_vi", widget: "markdown", required: false }
+
+      # ─── Scene composer (only matters if post is featured on home page) ───
+      - label: "🎨 Home Page Scene (only used if featured)"
+        name: "scene"
+        widget: "object"
+        required: false
+        collapsed: true
+        hint: "Compose the illustrated parallax scene that appears on the home page when this post is featured. If not featured, ignore this section."
+        fields:
+          - label: "Scene Type"
+            name: "type"
+            widget: "select"
+            default: "skyscape"
+            options:
+              - { label: "Skyscape (above water — sky, mountains, etc.)", value: "skyscape" }
+              - { label: "Underwater (under the sea)", value: "underwater" }
+          - label: "Sky / Water Preset (sets the gradient + mood)"
+            name: "preset"
+            widget: "select"
+            default: "clear_day"
+            options:
+              # Skyscape presets
+              - { label: "🌅 Sunrise — soft pinks and corals",      value: "sunrise" }
+              - { label: "🌇 Sunset — orange to magenta to indigo",  value: "sunset" }
+              - { label: "🌄 Golden hour — warm gold and amber",     value: "golden_hour" }
+              - { label: "☀️ Clear day — bright blue sky",            value: "clear_day" }
+              - { label: "☁️ Overcast — muted gray-blue",             value: "overcast" }
+              - { label: "🌌 Twilight / blue hour — violet & dusk",   value: "twilight" }
+              - { label: "🌃 Starry night — deep navy with stars",    value: "starry_night" }
+              - { label: "🏖️ Beach day — cyan ocean tones",           value: "beach_day" }
+              # Underwater presets
+              - { label: "🌊 Sunlit shallows (underwater)",           value: "sunlit_shallows" }
+              - { label: "🟦 Deep blue (underwater)",                 value: "deep_blue" }
+              - { label: "🪸 Coral reef tones (underwater)",          value: "coral_reef" }
+              - { label: "🌑 Twilight ocean (underwater, dark)",      value: "twilight_ocean" }
+          - label: "Far / background element"
+            name: "far"
+            widget: "select"
+            required: false
+            default: ""
+            options:
+              - { label: "— None —",                value: "" }
+              # Skyscape
+              - { label: "Snowy mountains",         value: "mountains-snowy" }
+              - { label: "Jagged peaks (no snow)",  value: "mountains-jagged" }
+              - { label: "Rolling hills",           value: "hills-rolling" }
+              - { label: "Forest mountains",        value: "mountains-forest" }
+              - { label: "Desert dunes",            value: "desert-dunes" }
+              - { label: "City skyline (modern)",   value: "city-skyline" }
+              - { label: "Pagoda / temple skyline", value: "pagoda-skyline" }
+              - { label: "Lighthouse on coast",     value: "lighthouse" }
+              # Underwater far
+              - { label: "Manta ray (underwater)",       value: "manta-ray" }
+              - { label: "Sea turtle (distant, underwater)", value: "sea-turtle-far" }
+              - { label: "School of fish (large, underwater)", value: "fish-school-large" }
+              - { label: "Sunken ship (underwater)",     value: "sunken-ship" }
+          - label: "Mid layer element"
+            name: "mid"
+            widget: "select"
+            required: false
+            default: ""
+            options:
+              - { label: "— None —",                value: "" }
+              # Skyscape
+              - { label: "Pine forest",             value: "pine-forest" }
+              - { label: "Deciduous forest",        value: "deciduous-forest" }
+              - { label: "Jungle canopy",           value: "jungle-canopy" }
+              - { label: "City silhouette (mid)",   value: "city-silhouette-mid" }
+              - { label: "Sailboats (3 boats)",     value: "sailboats" }
+              - { label: "Fishing boats (3 boats)", value: "fishing-boats" }
+              # Underwater mid
+              - { label: "Clownfish pair (underwater)",     value: "clownfish-pair" }
+              - { label: "Angelfish (underwater)",          value: "angelfish" }
+              - { label: "Blue tang school (underwater)",   value: "blue-tang-school" }
+              - { label: "Single jellyfish (underwater)",   value: "jellyfish" }
+              - { label: "Jellyfish school (underwater)",   value: "jellyfish-school" }
+              - { label: "Octopus (underwater)",            value: "octopus" }
+              - { label: "Seahorse (underwater)",           value: "seahorse" }
+              - { label: "Sea turtle close (underwater)",   value: "sea-turtle-close" }
+          - label: "Foreground element"
+            name: "front"
+            widget: "select"
+            required: false
+            default: ""
+            options:
+              - { label: "— None —",                value: "" }
+              # Skyscape
+              - { label: "Palm trees",              value: "palm-trees" }
+              - { label: "Pine tree cluster",       value: "pine-cluster" }
+              - { label: "Sandy shore",             value: "sandy-shore" }
+              - { label: "Ocean waves",             value: "ocean-waves" }
+              - { label: "Jungle leaves / fronds",  value: "jungle-leaves" }
+              - { label: "Cherry blossom branch",   value: "cherry-blossom" }
+              - { label: "Snow drift",              value: "snow-drift" }
+              - { label: "Rocks cluster",           value: "rocks-cluster" }
+              # Underwater foreground
+              - { label: "Coral reef (underwater)",   value: "coral-reef" }
+              - { label: "Kelp forest (underwater)",  value: "kelp-forest" }
+              - { label: "Anemone cluster (underwater)", value: "anemone-cluster" }
+              - { label: "Sea fan (underwater)",      value: "sea-fan" }
+              - { label: "Sandy bottom (underwater)", value: "sandy-bottom" }
+              - { label: "Sunken anchor (underwater)", value: "sunken-anchor" }
+          - label: "Sky decoration — left"
+            name: "sky_left"
+            widget: "select"
+            required: false
+            default: ""
+            options:
+              - { label: "— None —",          value: "" }
+              - { label: "Sun (large)",       value: "sun" }
+              - { label: "Sun (small)",       value: "sun-small" }
+              - { label: "Crescent moon",     value: "moon-crescent" }
+              - { label: "Full moon",         value: "moon-full" }
+              - { label: "Cloud (soft)",      value: "cloud-soft" }
+              - { label: "Cloud (wisps)",     value: "cloud-wisp" }
+              - { label: "Hot air balloon",   value: "hot-air-balloon" }
+              - { label: "Flying birds",      value: "flying-birds" }
+              - { label: "Light rays — strong (underwater)", value: "light-rays-strong" }
+              - { label: "Light rays — soft (underwater)",   value: "light-rays-soft" }
+          - label: "Sky decoration — center"
+            name: "sky_center"
+            widget: "select"
+            required: false
+            default: ""
+            options:
+              - { label: "— None —",                value: "" }
+              - { label: "Sun (large)",             value: "sun" }
+              - { label: "Sun (small)",             value: "sun-small" }
+              - { label: "Crescent moon",           value: "moon-crescent" }
+              - { label: "Full moon",               value: "moon-full" }
+              - { label: "Cloud (soft)",            value: "cloud-soft" }
+              - { label: "Twinkling stars",         value: "twinkling-stars" }
+              - { label: "Aurora band",             value: "aurora-band" }
+              - { label: "Flying birds",            value: "flying-birds" }
+              - { label: "Hot air balloon",         value: "hot-air-balloon" }
+          - label: "Sky decoration — right"
+            name: "sky_right"
+            widget: "select"
+            required: false
+            default: ""
+            options:
+              - { label: "— None —",          value: "" }
+              - { label: "Sun (large)",       value: "sun" }
+              - { label: "Sun (small)",       value: "sun-small" }
+              - { label: "Crescent moon",     value: "moon-crescent" }
+              - { label: "Full moon",         value: "moon-full" }
+              - { label: "Cloud (soft)",      value: "cloud-soft" }
+              - { label: "Cloud (wisps)",     value: "cloud-wisp" }
+              - { label: "Hot air balloon",   value: "hot-air-balloon" }
+              - { label: "Flying birds",      value: "flying-birds" }
+          - label: "Atmosphere overlays (effects on top)"
+            name: "atmosphere"
+            widget: "select"
+            multiple: true
+            required: false
+            default: []
+            options:
+              - { label: "❄️  Falling snow",     value: "snow" }
+              - { label: "🌧 Falling rain",      value: "rain" }
+              - { label: "🌫 Fog drifting",      value: "fog" }
+              - { label: "✨ Fireflies",          value: "fireflies" }
+              - { label: "🫧 Rising bubbles (underwater)",   value: "bubbles" }
+              - { label: "✦ Drifting plankton (underwater)", value: "particles" }
+
+  # ─── Read-only message inbox would go here later if we want ───
+  # For now, Pumpkin reads contact messages directly in the Firebase console.

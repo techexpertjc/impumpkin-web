@@ -1,0 +1,24 @@
+{
+  "name": "pumpkin-blog",
+  "version": "1.0.0",
+  "description": "Bao Ngoc (Pumpkin)'s travel blog — a static site built with Eleventy and deployed to Firebase",
+  "scripts": {
+    "start": "eleventy --serve --watch",
+    "build": "eleventy",
+    "clean": "rm -rf _site",
+    "deploy": "npm run build && firebase deploy --only hosting"
+  },
+  "devDependencies": {
+    "@11ty/eleventy": "^2.0.1",
+    "@11ty/eleventy-img": "^4.0.2",
+    "@11ty/eleventy-plugin-rss": "^1.2.0",
+    "@11ty/eleventy-plugin-syntaxhighlight": "^5.0.0",
+    "@quasibit/eleventy-plugin-sitemap": "^2.2.0",
+    "luxon": "^3.4.4",
+    "markdown-it": "^14.0.0",
+    "markdown-it-anchor": "^8.6.7"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

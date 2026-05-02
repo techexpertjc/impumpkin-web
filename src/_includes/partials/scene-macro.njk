@@ -1,0 +1,79 @@
+{# ────────────────────────────────────────────────────────────
+   renderScene(post, index)
+   Renders the layered scene (sky/far/mid/front + atmosphere)
+   for a featured post on the home page.
+
+   Reads post.data.scene which has shape:
+     { type: "skyscape" | "underwater",
+       preset: "sunrise" | "sunset" | "deep_blue" | ... ,
+       far: "mountains-snowy" | null,
+       mid: "pine-forest" | null,
+       front: "pine-cluster" | null,
+       sky_left:   "cloud-soft" | null,
+       sky_center: "sun" | null,
+       sky_right:  "moon-crescent" | null,
+       atmosphere: ["snow", "fog"]    // multi-select
+     }
+
+   Falls back to sensible defaults if scene is missing.
+   ──────────────────────────────────────────────────────────── #}
+
+{%- macro renderScene(post, index) -%}
+  {%- set scene = post.data.scene or {} -%}
+  {%- set type = scene.type or "skyscape" -%}
+  {%- set defaultPresets = ["clear_day", "sunset", "twilight"] -%}
+  {%- set preset = scene.preset or defaultPresets[index % 3] -%}
+  {%- set atmos = scene.atmosphere or [] -%}
+
+  {# ─── SKY LAYER ─── #}
+  <div class="layer layer-sky">
+    {%- if scene.sky_left   -%}<div class="scene-el el-{{ scene.sky_left }} slot-sky-left"  ><svg><use href="#el-{{ scene.sky_left   }}"/></svg></div>{%- endif -%}
+    {%- if scene.sky_center -%}<div class="scene-el el-{{ scene.sky_center }} slot-sky-center"><svg><use href="#el-{{ scene.sky_center }}"/></svg></div>{%- endif -%}
+    {%- if scene.sky_right  -%}<div class="scene-el el-{{ scene.sky_right  }} slot-sky-right" ><svg><use href="#el-{{ scene.sky_right  }}"/></svg></div>{%- endif -%}
+  </div>
+
+  {# ─── FAR LAYER ─── #}
+  {%- if scene.far -%}
+  <div class="layer layer-far">
+    <div class="scene-el el-{{ scene.far }} slot-far-full" data-layer="far"><svg><use href="#el-{{ scene.far }}"/></svg></div>
+  </div>
+  {%- else -%}
+  <div class="layer layer-far"></div>
+  {%- endif -%}
+
+  {# ─── SCENE TITLE (poster typography, occluded by mid/front) ─── #}
+  <div class="scene-title">
+    <h2>
+      {%- set words = post.data.destination.split(' ') -%}
+      {%- if words.length > 1 -%}
+        {{ words[0] }} <em>{{ words.slice(1).join(' ') }}</em>
+      {%- else -%}
+        {{ post.data.destination }}
+      {%- endif -%}
+    </h2>
+  </div>
+
+  {# ─── MID LAYER ─── #}
+  {%- if scene.mid -%}
+  <div class="layer layer-mid">
+    <div class="scene-el el-{{ scene.mid }} slot-mid-full" data-layer="mid"><svg><use href="#el-{{ scene.mid }}"/></svg></div>
+  </div>
+  {%- else -%}
+  <div class="layer layer-mid"></div>
+  {%- endif -%}
+
+  {# ─── FRONT LAYER ─── #}
+  {%- if scene.front -%}
+  <div class="layer layer-front">
+    <div class="scene-el el-{{ scene.front }} slot-front-full" data-layer="front"><svg><use href="#el-{{ scene.front }}"/></svg></div>
+  </div>
+  {%- else -%}
+  <div class="layer layer-front"></div>
+  {%- endif -%}
+
+  {# ─── ATMOSPHERE OVERLAYS ─── #}
+  {%- for a in atmos -%}
+  <div class="atmosphere {{ a }}"></div>
+  {%- endfor -%}
+
+{%- endmacro -%}

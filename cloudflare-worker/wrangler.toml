@@ -1,0 +1,7 @@
+name = "decap-oauth-proxy"
+main = "worker.js"
+compatibility_date = "2024-09-01"
+
+# After running `wrangler login` and `wrangler deploy`, set secrets via:
+#   wrangler secret put GITHUB_CLIENT_ID
+#   wrangler secret put GITHUB_CLIENT_SECRET

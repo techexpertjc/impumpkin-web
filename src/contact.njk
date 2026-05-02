@@ -1,0 +1,62 @@
+---
+layout: layouts/base.njk
+title: Contact
+permalink: /contact/
+bodyClass: page-contact
+description: Get in touch with Bao Ngoc (Pumpkin) — collaborations, kind words, or travel questions.
+---
+{%- set t = translations[locale or 'en'] -%}
+
+<section class="contact">
+  <div class="contact-inner">
+
+    <div class="contact-intro">
+      <p class="page-eyebrow">— {{ t.contactEyebrow }} —</p>
+      <h1 class="page-heading">{{ t.contactHeading }}</h1>
+      <p class="page-sub">{{ t.contactSubheading }}</p>
+
+      <div class="contact-channels">
+        <p>You can also reach me on:</p>
+        <ul>
+          <li><a href="{{ site.social.instagram.url }}" target="_blank" rel="noopener">Instagram</a></li>
+          <li><a href="{{ site.social.youtube.url }}" target="_blank" rel="noopener">YouTube</a></li>
+          <li><a href="{{ site.social.tiktok.url }}" target="_blank" rel="noopener">TikTok</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <form id="contact-form" class="contact-form" novalidate>
+      <div class="field">
+        <label for="contact-name">{{ t.formName }}</label>
+        <input id="contact-name" name="name" type="text" required maxlength="100">
+      </div>
+
+      <div class="field">
+        <label for="contact-email">{{ t.formEmail }}</label>
+        <input id="contact-email" name="email" type="email" required maxlength="200">
+      </div>
+
+      <div class="field">
+        <label for="contact-message">{{ t.formMessage }}</label>
+        <textarea id="contact-message" name="message" required rows="6" maxlength="5000"></textarea>
+      </div>
+
+      <!-- honeypot for spam bots -->
+      <div class="honeypot" aria-hidden="true">
+        <label>Don't fill this out: <input type="text" name="website" tabindex="-1" autocomplete="off"></label>
+      </div>
+
+      <button type="submit" class="btn btn-primary">
+        <span data-submit-text>{{ t.formSubmit }}</span>
+        <span data-sending-text hidden>{{ t.formSending }}</span>
+      </button>
+
+      <p class="form-status" data-form-status></p>
+    </form>
+
+  </div>
+</section>
+
+{% block extraJs %}
+<script type="module" src="/assets/js/contact-form.js"></script>
+{% endblock %}

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="{{ locale or site.language }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  {%- set pageTitle = title or seoTitle -%}
+  {%- set pageDesc = description or seoDescription or site.description -%}
+  {%- set pageImage = ogImage or site.seo.ogImage -%}
+  {%- set pageUrl = site.url + page.url -%}
+
+  <title>{% if pageTitle %}{{ pageTitle }} — {{ site.title }}{% else %}{{ site.title }} — {{ site.tagline }}{% endif %}</title>
+  <meta name="description" content="{{ pageDesc }}">
+  <meta name="keywords" content="{{ site.seo.keywords }}">
+  <meta name="author" content="{{ site.author.name }}">
+  <link rel="canonical" href="{{ pageUrl }}">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="{% if layout == 'layouts/post.njk' %}article{% else %}website{% endif %}">
+  <meta property="og:title" content="{% if pageTitle %}{{ pageTitle }}{% else %}{{ site.title }}{% endif %}">
+  <meta property="og:description" content="{{ pageDesc }}">
+  <meta property="og:url" content="{{ pageUrl }}">
+  <meta property="og:image" content="{{ site.url }}{{ pageImage }}">
+  <meta property="og:site_name" content="{{ site.title }}">
+  <meta property="og:locale" content="{{ locale or 'en' }}_US">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="{{ site.seo.twitterHandle }}">
+  <meta name="twitter:title" content="{% if pageTitle %}{{ pageTitle }}{% else %}{{ site.title }}{% endif %}">
+  <meta name="twitter:description" content="{{ pageDesc }}">
+  <meta name="twitter:image" content="{{ site.url }}{{ pageImage }}">
+
+  <!-- Structured data -->
+  {% if layout == "layouts/post.njk" %}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "{{ title }}",
+    "description": "{{ description or excerpt }}",
+    "image": "{{ site.url }}{{ hero }}",
+    "datePublished": "{{ page.date | htmlDateString }}",
+    "author": {
+      "@type": "Person",
+      "name": "{{ site.author.name }}",
+      "url": "{{ site.url }}/about/"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "{{ site.title }}",
+      "logo": { "@type": "ImageObject", "url": "{{ site.url }}/assets/images/logo.png" }
+    },
+    "mainEntityOfPage": "{{ pageUrl }}"
+  }
+  </script>
+  {% else %}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "{{ site.title }}",
+    "url": "{{ site.url }}",
+    "description": "{{ site.description }}",
+    "author": { "@type": "Person", "name": "{{ site.author.name }}" }
+  }
+  </script>
+  {% endif %}
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg">
+  <link rel="alternate icon" href="/favicon.ico">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Instrument+Serif:ital@0;1&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/assets/css/main.css">
+  {% block extraCss %}{% endblock %}
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="{{ site.title }}" href="/feed.xml">
+</head>
+<body class="{{ bodyClass or '' }}">
+
+  <a href="#main" class="skip-link">Skip to content</a>
+
+  {% include "partials/header.njk" %}
+
+  <main id="main">
+    {{ content | safe }}
+  </main>
+
+  {% include "partials/footer.njk" %}
+
+  <!-- Firebase + site JS -->
+  <script type="module" src="/assets/js/firebase-init.js"></script>
+  <script type="module" src="/assets/js/main.js"></script>
+  {% block extraJs %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,59 @@
+---
+layout: layouts/base.njk
+---
+{%- set t = translations[locale or 'en'] -%}
+
+<article class="post">
+
+  <header class="post-header">
+    <div class="post-header-inner">
+      <a href="/blogs/" class="back-link">← {{ t.backToBlogs }}</a>
+      <p class="post-eyebrow">
+        {{ destination }}{% if country %} <span>·</span> {{ country }}{% endif %}
+      </p>
+      <h1 class="post-title">{{ title }}</h1>
+      {% if excerpt %}<p class="post-excerpt">{{ excerpt }}</p>{% endif %}
+      <div class="post-meta">
+        <time datetime="{{ page.date | htmlDateString }}">
+          {{ page.date | readableDate(locale or 'en') }}
+        </time>
+        {% if tags %}
+        <span class="post-tags">
+          {%- for tag in tags -%}
+            <span>{{ tag }}</span>
+          {%- endfor -%}
+        </span>
+        {% endif %}
+      </div>
+    </div>
+  </header>
+
+  {% if hero %}
+  <figure class="post-hero">
+    <img src="{{ hero }}" alt="{{ title }}" loading="eager">
+    {% if heroCaption %}<figcaption>{{ heroCaption }}</figcaption>{% endif %}
+  </figure>
+  {% endif %}
+
+  <div class="post-body">
+    {{ content | safe }}
+  </div>
+
+  {% if gallery and gallery.length %}
+  <section class="post-gallery">
+    <h2>More from this trip</h2>
+    <div class="post-gallery-grid">
+      {%- for img in gallery -%}
+        <a href="{{ img.src }}" class="gallery-item">
+          <img src="{{ img.src }}" alt="{{ img.alt or title }}" loading="lazy">
+        </a>
+      {%- endfor -%}
+    </div>
+  </section>
+  {% endif %}
+
+  <footer class="post-footer">
+    <a href="/blogs/" class="back-link">← {{ t.backToBlogs }}</a>
+  </footer>
+
+</article>

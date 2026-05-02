@@ -1,0 +1,235 @@
+---
+layout: layouts/base.njk
+title: Blogs
+permalink: /blogs/
+bodyClass: page-blogs
+description: A journey across destinations — each pin a story, each story a place.
+---
+{%- set t = translations[locale or 'en'] -%}
+{%- set journey = collections.journey -%}
+
+<!-- Atmosphere layers -->
+<div class="atlas-grain"></div>
+<div class="atlas-vignette"></div>
+
+<!-- Page furniture -->
+<div class="atlas-frame tl">Field Notebook · Vol. I</div>
+<div class="atlas-frame tr">{% currentYear %} — A Wanderer's Almanack</div>
+<div class="atlas-frame bl">Lat. unknown · Long. somewhere</div>
+<div class="atlas-frame br"><span class="page-num" id="atlas-page-num">— i —</span></div>
+
+<!-- Progress dots (one per snap section: intro + N destinations + outro) -->
+<div class="atlas-progress" id="atlas-progress">
+  <div class="atlas-progress-dot" data-step="0"></div>
+  {%- for post in journey -%}
+  <div class="atlas-progress-dot" data-step="{{ loop.index }}"></div>
+  {%- endfor -%}
+  <div class="atlas-progress-dot" data-step="{{ journey.length + 1 }}"></div>
+</div>
+
+<!-- World map (fixed background) -->
+<div class="atlas-map-stage">
+  <svg class="world-map" viewBox="-4.1 0.4 968.2 506.2" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+
+    <!-- Lat/long grid (sized to the new viewBox) -->
+    <g class="grid">
+      <!-- Equator (~y=253), Tropic of Cancer (~y=215), Tropic of Capricorn (~y=295) -->
+      <line class="grid-line" x1="0" y1="125" x2="968" y2="125"/>
+      <line class="grid-line" x1="0" y1="215" x2="968" y2="215"/>
+      <line class="grid-line" x1="0" y1="253" x2="968" y2="253"/>
+      <line class="grid-line" x1="0" y1="295" x2="968" y2="295"/>
+      <line class="grid-line" x1="0" y1="385" x2="968" y2="385"/>
+      <!-- Meridians at roughly 30° intervals -->
+      <line class="grid-line" x1="160" y1="0" x2="160" y2="506"/>
+      <line class="grid-line" x1="320" y1="0" x2="320" y2="506"/>
+      <line class="grid-line" x1="484" y1="0" x2="484" y2="506"/>
+      <line class="grid-line" x1="644" y1="0" x2="644" y2="506"/>
+      <line class="grid-line" x1="804" y1="0" x2="804" y2="506"/>
+      <!-- Soft globe-curve overlays for visual texture -->
+      <path class="grid-curve" d="M 484,40 Q 364,253 484,470"/>
+      <path class="grid-curve" d="M 484,40 Q 604,253 484,470"/>
+      <path class="grid-curve" d="M 484,40 Q 184,253 484,470"/>
+      <path class="grid-curve" d="M 484,40 Q 784,253 484,470"/>
+    </g>
+
+    <!-- Real world map (country polygons) -->
+    {% include "partials/world-map-paths.njk" %}
+
+    <!-- Compass rose (lower-left of new viewBox) -->
+    <g class="compass" transform="translate(60,440)">
+      <circle r="32" fill="none" stroke="#4a3f2a" stroke-width="0.6"/>
+      <circle r="22" fill="none" stroke="#4a3f2a" stroke-width="0.4" stroke-dasharray="1.5 2"/>
+      <path d="M 0,-30 L 4,0 L 0,4 L -4,0 Z" fill="#b04830" opacity="0.85"/>
+      <path d="M 0,30 L -4,0 L 0,-4 L 4,0 Z" fill="#4a3f2a" opacity="0.8"/>
+      <path d="M -30,0 L 0,-4 L 4,0 L 0,4 Z" fill="#4a3f2a" opacity="0.6"/>
+      <path d="M 30,0 L 0,4 L -4,0 L 0,-4 Z" fill="#4a3f2a" opacity="0.6"/>
+      <text x="0" y="-36" text-anchor="middle">N</text>
+      <text x="0" y="42" text-anchor="middle">S</text>
+      <text x="-40" y="3" text-anchor="middle">W</text>
+      <text x="40" y="3" text-anchor="middle">E</text>
+    </g>
+
+    <!-- Map title -->
+    <text class="map-title" x="484" y="32" text-anchor="middle">CARTA · ITINERIS · {% currentYear %}</text>
+    <text class="map-coord" x="484" y="49" text-anchor="middle">— a wanderer's almanack —</text>
+
+    <!-- Scale bar -->
+    <g transform="translate(800,470)">
+      <line x1="0" y1="0" x2="120" y2="0" stroke="#4a3f2a" stroke-width="1"/>
+      <line x1="0" y1="-3" x2="0" y2="3" stroke="#4a3f2a" stroke-width="1"/>
+      <line x1="40" y1="-2" x2="40" y2="2" stroke="#4a3f2a" stroke-width="0.8"/>
+      <line x1="80" y1="-2" x2="80" y2="2" stroke="#4a3f2a" stroke-width="0.8"/>
+      <line x1="120" y1="-3" x2="120" y2="3" stroke="#4a3f2a" stroke-width="1"/>
+      <text class="map-coord" x="60" y="14" text-anchor="middle">∞ leagues, more or less</text>
+    </g>
+
+    <!-- Route paths between consecutive destinations (arc upward like a flight path) -->
+    {%- for post in journey -%}
+      {%- if not loop.first -%}
+        {%- set prev = journey[loop.index0 - 1] -%}
+        {%- set arc = prev.data | routeArc(post.data) -%}
+        {%- set midX = (prev.data.mapX + post.data.mapX) / 2 -%}
+        {%- set midY = ((prev.data.mapY + post.data.mapY) / 2) - arc -%}
+        <path id="glow-{{ loop.index0 }}" class="route-glow" d="M {{ prev.data.mapX }},{{ prev.data.mapY }} Q {{ midX }},{{ midY }} {{ post.data.mapX }},{{ post.data.mapY }}"/>
+        <path id="route-{{ loop.index0 }}" class="route" d="M {{ prev.data.mapX }},{{ prev.data.mapY }} Q {{ midX }},{{ midY }} {{ post.data.mapX }},{{ post.data.mapY }}"/>
+      {%- endif -%}
+    {%- endfor -%}
+
+    <!-- Plane (animated along routes) -->
+    <g class="plane" id="plane">
+      <path class="plane-shadow" d="M 0,2 L -10,-3 L -10,1 L -3,1 L -3,8 L -6,9 L -6,11 L 1,10 L 8,11 L 8,9 L 5,8 L 5,1 L 12,1 L 12,-3 Z" transform="translate(1,2)"/>
+      <path class="plane-body" d="M 0,0 L -10,-5 L -10,-1 L -3,-1 L -3,6 L -6,7 L -6,9 L 1,8 L 8,9 L 8,7 L 5,6 L 5,-1 L 12,-1 L 12,-5 Z"/>
+    </g>
+
+    <!-- Pins (one per destination) -->
+    <g class="pins">
+      {%- for post in journey -%}
+      <g class="pin-group" data-pin="{{ loop.index0 }}" transform="translate({{ post.data.mapX }},{{ post.data.mapY }})">
+        <circle class="pin-ring" r="14"/>
+        <circle class="pin-ring pin-ring-2" r="9"/>
+        <circle class="pin-dot" r="5"/>
+        <text class="pin-roman" text-anchor="middle" y="2">{{ loop.index | romanNumeral }}</text>
+        <text class="pin-label" y="-22" text-anchor="middle">{{ post.data.destination }}</text>
+      </g>
+      {%- endfor -%}
+    </g>
+  </svg>
+</div>
+
+<!-- ════════ SNAP SECTIONS ════════ -->
+<div class="atlas-snap">
+
+  <!-- INTRO -->
+  <section class="atlas-intro" data-step="0">
+    <div class="atlas-intro-eyebrow">A Travel Journal</div>
+    <h1 class="atlas-intro-title">Where I<br>Wander<span class="amp">&amp;</span><em>Wonder</em></h1>
+    <p class="atlas-intro-sub">{{ journey.length }} {% if journey.length == 1 %}place{% else %}places{% endif %}, a stubborn habit of writing it all down.</p>
+    <div class="atlas-intro-byline">— from Pumpkin, with love</div>
+    <div class="atlas-intro-scroll">scroll to begin</div>
+  </section>
+
+  <!-- DESTINATIONS (one per post, chronological — oldest first) -->
+  {%- for post in journey -%}
+  {%- set chapter = "Chapter " + (loop.index | romanNumeral) -%}
+  <section
+    class="atlas-dest"
+    data-step="{{ loop.index }}"
+    data-pin="{{ loop.index0 }}"
+    data-route="{% if not loop.first %}route-{{ loop.index0 }}{% endif %}"
+  >
+
+    <div class="atlas-dest-content">
+      <div class="atlas-dest-numeral">
+        <span class="atlas-roman">{{ loop.index | romanNumeral }}.</span>
+        <span class="atlas-chapter">{{ chapter }} · {{ post.date | monthYear }}</span>
+      </div>
+
+      {%- set words = post.data.destination.split(' ') -%}
+      <h2 class="atlas-dest-title">
+        {%- if words.length > 1 -%}
+          {{ words[0] }}<span class="accent"> {{ words.slice(1).join(' ') }}</span>
+        {%- else -%}
+          {{ post.data.destination }}
+        {%- endif -%}
+      </h2>
+      <p class="atlas-dest-region">{{ post.data.country }}</p>
+      {% if post.data.coords %}
+      <p class="atlas-dest-coords">{{ post.data.coords }}</p>
+      {% endif %}
+
+      <div class="atlas-ornament">
+        <div class="atlas-ornament-line"></div>
+        <span class="atlas-ornament-mark">❦</span>
+        <div class="atlas-ornament-line"></div>
+      </div>
+
+      <p class="atlas-dest-text">{{ post.data.excerpt }}</p>
+
+      {% if post.data.tags and post.data.tags.length %}
+      <div class="atlas-dest-tags">
+        {%- for tag in post.data.tags | limit(3) -%}
+          <span>{{ tag }}</span>
+        {%- endfor -%}
+      </div>
+      {% endif %}
+
+      <a href="{{ post.url }}" class="atlas-dest-cta">Read the full story →</a>
+    </div>
+
+    <div class="atlas-dest-photo-stage">
+      <a href="{{ post.url }}" class="atlas-polaroid" aria-label="{{ post.data.title }}">
+        {% if post.data.hero %}
+          <img src="{{ post.data.hero }}" alt="{{ post.data.title }}" loading="lazy">
+        {% else %}
+          <img src="/assets/images/destinations/{{ post.fileSlug }}/hero.jpg" alt="{{ post.data.title }}" loading="lazy">
+        {% endif %}
+        <div class="atlas-polaroid-caption">{{ post.data.destination | lower }}, {{ post.date | monthYear | lower }}</div>
+      </a>
+
+      <div class="atlas-stamp pos-{{ loop.index0 % 4 }}">
+        Visited<br>{{ post.date | monthYear }}
+      </div>
+
+      <div class="atlas-ticket pos-{{ (loop.index0 + 1) % 4 }}">
+        Boarding Pass<br>
+        <b>{{ post.data.country | upper }}</b><br>
+        Stop N° {{ loop.index | romanNumeral }}
+      </div>
+    </div>
+
+  </section>
+  {%- endfor -%}
+
+  <!-- OUTRO -->
+  <section class="atlas-outro" data-step="{{ journey.length + 1 }}">
+    <div class="atlas-outro-stat">— end of the volume so far —</div>
+    <h2 class="atlas-outro-title">
+      Of all the places I've been, <span class="accent">the next one</span> is my favorite.
+    </h2>
+    <div class="atlas-outro-stats">
+      <div class="atlas-outro-stat-block">
+        <div class="num">{{ journey.length }}</div>
+        <div class="label">{% if journey.length == 1 %}place{% else %}places{% endif %}</div>
+      </div>
+      <div class="atlas-outro-stat-block">
+        <div class="num">{{ journey | featured | length }}</div>
+        <div class="label">featured</div>
+      </div>
+      <div class="atlas-outro-stat-block">
+        <div class="num">∞</div>
+        <div class="label">memories</div>
+      </div>
+    </div>
+    <div class="atlas-outro-sign">— to be continued —</div>
+  </section>
+
+</div>
+
+{% block extraCss %}
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,200..900,0..100;1,9..144,200..900,0..100&family=Crimson+Pro:ital,wght@0,300..700;1,300..700&family=Space+Mono:wght@400;700&family=Caveat:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/blogs-atlas.css">
+{% endblock %}
+
+{% block extraJs %}
+<script type="module" src="/assets/js/blogs-atlas.js"></script>
+{% endblock %}

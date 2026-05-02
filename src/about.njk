@@ -1,0 +1,59 @@
+---
+layout: layouts/base.njk
+title: About
+permalink: /about/
+bodyClass: page-about
+description: About Bao Ngoc (Pumpkin) — Vietnamese social media marketer and travel writer.
+---
+{%- set t = translations[locale or 'en'] -%}
+
+<section class="about">
+  <div class="about-inner">
+
+    <div class="about-photo-col">
+      <figure class="about-photo">
+        <img src="{{ site.author.photo }}" alt="{{ site.author.name }}" loading="eager">
+      </figure>
+    </div>
+
+    <div class="about-content-col">
+      <p class="page-eyebrow">— {{ t.aboutEyebrow }} —</p>
+      <h1 class="page-heading"><em>Hi,</em> I'm Pumpkin.</h1>
+
+      <div class="about-bio">
+        <p>
+          My name is <strong>Bao Ngoc</strong>, but everyone calls me Pumpkin — a nickname that has somehow followed me from a quiet street in Vietnam to airports, hostels, and night markets all over the world. By day I work in social media marketing, which is a fancy way of saying I tell stories online. By every other moment I get, I'm planning the next trip, looking up flights I shouldn't book, and writing in tiny notebooks that no one will ever read.
+        </p>
+        <p>
+          I'm Vietnamese, which means I grew up understanding that food is a love language and that a good street stall beats a fancy restaurant most days of the week. Travel, for me, started as curiosity about how other people eat, gather, mourn, celebrate. Why a tea ceremony takes twenty minutes here and two hours there. Why some cities feel loud at night and others feel like a held breath.
+        </p>
+        <p>
+          This blog is where I try to write all that down. Honestly. Slowly. With too many photos and the occasional recipe. I hope you find something useful here — and if you want to swap stories or trip recommendations, the contact form is always open.
+        </p>
+      </div>
+
+      <div class="about-meta">
+        <div>
+          <p class="meta-label">Based in</p>
+          <p class="meta-value">{{ site.author.home }}</p>
+        </div>
+        <div>
+          <p class="meta-label">Currently</p>
+          <p class="meta-value">Planning the next one</p>
+        </div>
+        <div>
+          <p class="meta-label">Find me on</p>
+          <p class="meta-value">
+            <a href="{{ site.social.instagram.url }}" target="_blank" rel="noopener">Instagram</a>
+            <span>·</span>
+            <a href="{{ site.social.youtube.url }}" target="_blank" rel="noopener">YouTube</a>
+            <span>·</span>
+            <a href="{{ site.social.tiktok.url }}" target="_blank" rel="noopener">TikTok</a>
+          </p>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</section>

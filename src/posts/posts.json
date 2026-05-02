@@ -1,0 +1,9 @@
+{
+  "layout": "layouts/post.njk",
+  "tags": ["posts"],
+  "permalink": "/blogs/{{ page.fileSlug }}/",
+  "eleventyComputed": {
+    "title": "{{ title }}",
+    "description": "{{ excerpt or description }}"
+  }
+}

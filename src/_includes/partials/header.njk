@@ -1,0 +1,27 @@
+{%- set t = translations[locale or 'en'] -%}
+<header class="site-header">
+  <div class="site-header-inner">
+    <a href="/" class="site-logo" aria-label="{{ site.title }}">
+      <span class="logo-mark">P</span>
+      <span class="logo-text">{{ site.title }}</span>
+    </a>
+
+    <nav class="site-nav" aria-label="Main">
+      {%- for item in site.nav -%}
+        <a href="{{ item.url }}" class="nav-link{% if page.url == item.url %} is-active{% endif %}">
+          {% if locale == 'vi' %}{{ item.label_vi }}{% else %}{{ item.label_en }}{% endif %}
+        </a>
+      {%- endfor -%}
+    </nav>
+
+    <button class="lang-toggle" data-lang-toggle aria-label="Switch language">
+      <span class="lang-en{% if locale != 'vi' %} is-active{% endif %}">EN</span>
+      <span class="lang-divider">/</span>
+      <span class="lang-vi{% if locale == 'vi' %} is-active{% endif %}">VI</span>
+    </button>
+
+    <button class="nav-toggle" data-nav-toggle aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>

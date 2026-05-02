@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "impumpkin-web"
+  },
+  "targets": {
+    "impumpkin-web": {
+      "hosting": {
+        "pumpkin-blog": [
+          "im-pumpkin-02"
+        ]
+      }
+    }
+  }
+}

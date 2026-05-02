@@ -1,0 +1,370 @@
+---
+layout: layouts/base.njk
+title: Map Coordinate Picker (dev tool)
+permalink: /tools/map-picker/
+eleventyExcludeFromCollections: true
+sitemap:
+  ignore: true
+robots: noindex
+---
+{%- set journey = collections.journey -%}
+
+<style>
+  /* Local-only styles for this dev tool. Doesn't affect any other page. */
+  body.page-home, body.page-blogs { /* not these */ }
+  .picker-wrap {
+    background: #ede2c4;
+    min-height: 100vh;
+    padding: 32px 24px 96px;
+    font-family: 'Crimson Pro', Georgia, serif;
+    color: #1f1a14;
+  }
+  .picker-header {
+    max-width: 1200px;
+    margin: 0 auto 24px;
+  }
+  .picker-header h1 {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 32px;
+    font-weight: 600;
+    margin: 0 0 8px;
+    letter-spacing: -0.01em;
+  }
+  .picker-header .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border: 1px solid #b04830;
+    color: #b04830;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border-radius: 2px;
+    margin-bottom: 12px;
+  }
+  .picker-header p {
+    font-size: 16px;
+    color: #4a3f2a;
+    max-width: 720px;
+    margin: 0 0 8px;
+    line-height: 1.5;
+  }
+  .picker-grid {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 24px;
+    align-items: start;
+  }
+  @media (max-width: 900px) { .picker-grid { grid-template-columns: 1fr; } }
+  .map-card {
+    background: #f4ebd2;
+    border: 1px solid rgba(74, 63, 42, 0.2);
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+  .map-card svg.world-map { display: block; width: 100%; height: auto; cursor: crosshair; }
+  .map-card .land { fill: #e7dab6; stroke: #4a3f2a; stroke-width: 0.6; vector-effect: non-scaling-stroke; }
+  .map-card .land:hover { fill: #d4c69a; }
+  .map-card .grid-line { stroke: #8b6f47; stroke-width: 0.4; opacity: 0.18; fill: none; }
+  .map-card .crosshair { stroke: #b04830; stroke-width: 0.5; opacity: 0.7; pointer-events: none; }
+  .map-card .crosshair-pulse { fill: #b04830; opacity: 0.4; pointer-events: none; }
+
+  .map-card .ref-pin { fill: #4a3f2a; opacity: 0.55; pointer-events: auto; cursor: help; }
+  .map-card .ref-pin-label { fill: #4a3f2a; font-family: 'Space Mono', monospace; font-size: 8px; opacity: 0.65; pointer-events: none; }
+
+  .map-card .picked-pin { fill: #b04830; stroke: #1f1a14; stroke-width: 0.8; pointer-events: none; }
+  .map-card .picked-pin-ring { fill: none; stroke: #b04830; stroke-width: 0.6; opacity: 0.5; pointer-events: none; }
+
+  .panel {
+    background: #f4ebd2;
+    border: 1px solid rgba(74, 63, 42, 0.2);
+    border-radius: 6px;
+    padding: 18px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+  .panel + .panel { margin-top: 16px; }
+  .panel h2 {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin: 0 0 10px;
+    color: #6b5d44;
+    font-weight: 600;
+  }
+  .coord-display {
+    font-family: 'Space Mono', monospace;
+    font-size: 18px;
+    color: #1f1a14;
+    background: #ede2c4;
+    padding: 10px 14px;
+    border-radius: 4px;
+    border: 1px solid rgba(74, 63, 42, 0.15);
+    line-height: 1.6;
+  }
+  .coord-display.muted { color: #8b6f47; font-style: italic; font-size: 14px; font-family: 'Crimson Pro', serif; }
+  .coord-display.selected {
+    border-color: #b04830;
+    background: rgba(176, 72, 48, 0.08);
+  }
+  .copy-block {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    background: #1f1a14;
+    color: #ede2c4;
+    padding: 12px 14px;
+    border-radius: 4px;
+    line-height: 1.6;
+    white-space: pre;
+    margin-top: 12px;
+    position: relative;
+  }
+  .copy-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: #b04830;
+    color: #fff;
+    border: none;
+    padding: 4px 10px;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+  .copy-btn:hover { background: #8e3322; }
+  .copy-btn.copied { background: #6b7c4e; }
+
+  .ref-list { list-style: none; margin: 0; padding: 0; font-size: 14px; }
+  .ref-list li { padding: 6px 0; border-bottom: 1px dashed rgba(74, 63, 42, 0.18); display: flex; justify-content: space-between; align-items: center; }
+  .ref-list li:last-child { border: none; }
+  .ref-list .ref-name { font-weight: 500; }
+  .ref-list .ref-coord { font-family: 'Space Mono', monospace; font-size: 12px; color: #6b5d44; }
+  .ref-list button {
+    background: transparent;
+    border: 1px solid rgba(74, 63, 42, 0.3);
+    color: #4a3f2a;
+    padding: 2px 8px;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    margin-left: 8px;
+  }
+  .ref-list button:hover { background: rgba(176, 72, 48, 0.1); border-color: #b04830; color: #b04830; }
+
+  .help { font-size: 13px; line-height: 1.6; color: #4a3f2a; }
+  .help code { background: #ede2c4; padding: 1px 6px; border-radius: 3px; font-size: 12px; }
+</style>
+
+<div class="picker-wrap">
+  <div class="picker-header">
+    <span class="badge">Dev Tool</span>
+    <h1>Map Coordinate Picker</h1>
+    <p>Click anywhere on the map to grab <code>mapX</code> / <code>mapY</code> values for your post frontmatter. Existing pins from your posts are shown in faded brown for reference.</p>
+  </div>
+
+  <div class="picker-grid">
+
+    <!-- ─── MAP ─── -->
+    <div class="map-card">
+      <svg
+        id="picker-svg"
+        class="world-map"
+        viewBox="-4.1 0.4 968.2 506.2"
+        preserveAspectRatio="xMidYMid meet"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <!-- Lat/long grid for reference -->
+        <g class="grid">
+          <line class="grid-line" x1="0" y1="125" x2="968" y2="125"/>
+          <line class="grid-line" x1="0" y1="215" x2="968" y2="215"/>
+          <line class="grid-line" x1="0" y1="253" x2="968" y2="253"/>
+          <line class="grid-line" x1="0" y1="295" x2="968" y2="295"/>
+          <line class="grid-line" x1="0" y1="385" x2="968" y2="385"/>
+          <line class="grid-line" x1="160" y1="0" x2="160" y2="506"/>
+          <line class="grid-line" x1="320" y1="0" x2="320" y2="506"/>
+          <line class="grid-line" x1="484" y1="0" x2="484" y2="506"/>
+          <line class="grid-line" x1="644" y1="0" x2="644" y2="506"/>
+          <line class="grid-line" x1="804" y1="0" x2="804" y2="506"/>
+        </g>
+
+        <!-- World map -->
+        {% include "partials/world-map-paths.njk" %}
+
+        <!-- Existing pins (reference, semi-transparent) -->
+        <g id="reference-pins">
+          {%- for post in journey -%}
+          <g class="ref-pin-group" data-name="{{ post.data.destination }}" transform="translate({{ post.data.mapX }},{{ post.data.mapY }})">
+            <circle class="ref-pin" r="3"/>
+            <text class="ref-pin-label" x="6" y="3">{{ post.data.destination }} ({{ post.data.mapX }},{{ post.data.mapY }})</text>
+          </g>
+          {%- endfor -%}
+        </g>
+
+        <!-- Live cursor crosshair -->
+        <g id="cursor-overlay" style="display:none">
+          <line class="crosshair" id="ch-h" x1="0" y1="0" x2="968" y2="0"/>
+          <line class="crosshair" id="ch-v" x1="0" y1="0" x2="0" y2="506"/>
+          <circle class="crosshair-pulse" id="ch-dot" r="3"/>
+        </g>
+
+        <!-- The pin you most recently clicked -->
+        <g id="picked-overlay" style="display:none">
+          <circle class="picked-pin-ring" id="picked-ring" r="14"/>
+          <circle class="picked-pin-ring" id="picked-ring-2" r="9"/>
+          <circle class="picked-pin" id="picked-dot" r="5"/>
+        </g>
+      </svg>
+    </div>
+
+    <!-- ─── SIDE PANEL ─── -->
+    <div>
+      <div class="panel">
+        <h2>Live cursor</h2>
+        <div class="coord-display muted" id="live-coords">Hover the map…</div>
+      </div>
+
+      <div class="panel">
+        <h2>Last clicked</h2>
+        <div class="coord-display selected" id="picked-coords">— click anywhere on the map —</div>
+        <div class="copy-block" id="copy-block" style="display:none">
+          <button class="copy-btn" id="copy-btn">Copy</button><span id="copy-text"></span>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Existing pins</h2>
+        <ul class="ref-list">
+          {%- for post in journey -%}
+          <li>
+            <span>
+              <span class="ref-name">{{ post.data.destination }}</span><br>
+              <span class="ref-coord">{{ post.data.mapX }}, {{ post.data.mapY }}</span>
+            </span>
+            <button data-jump-x="{{ post.data.mapX }}" data-jump-y="{{ post.data.mapY }}">Show</button>
+          </li>
+          {%- endfor -%}
+        </ul>
+      </div>
+
+      <div class="panel">
+        <h2>How to use</h2>
+        <p class="help">
+          <strong>1.</strong> Hover the map — your live coords appear above.<br>
+          <strong>2.</strong> Click to drop a pin and lock the coords.<br>
+          <strong>3.</strong> Hit <code>Copy</code> to copy the frontmatter.<br>
+          <strong>4.</strong> Paste it into your post's <code>.md</code> file (replacing the existing <code>mapX</code> / <code>mapY</code> lines).
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  const svg = document.getElementById('picker-svg');
+  const cursorG = document.getElementById('cursor-overlay');
+  const chH = document.getElementById('ch-h');
+  const chV = document.getElementById('ch-v');
+  const chDot = document.getElementById('ch-dot');
+  const liveOut = document.getElementById('live-coords');
+
+  const pickedG = document.getElementById('picked-overlay');
+  const pickedRing = document.getElementById('picked-ring');
+  const pickedRing2 = document.getElementById('picked-ring-2');
+  const pickedDot = document.getElementById('picked-dot');
+  const pickedOut = document.getElementById('picked-coords');
+  const copyBlock = document.getElementById('copy-block');
+  const copyText = document.getElementById('copy-text');
+  const copyBtn = document.getElementById('copy-btn');
+
+  // Convert a clientX/clientY pixel position to SVG coordinates
+  function clientToSvg(clientX, clientY) {
+    const pt = svg.createSVGPoint();
+    pt.x = clientX;
+    pt.y = clientY;
+    const ctm = svg.getScreenCTM();
+    if (!ctm) return null;
+    const inv = ctm.inverse();
+    return pt.matrixTransform(inv);
+  }
+
+  svg.addEventListener('mouseenter', () => { cursorG.style.display = ''; });
+  svg.addEventListener('mouseleave', () => {
+    cursorG.style.display = 'none';
+    liveOut.textContent = 'Hover the map…';
+    liveOut.classList.add('muted');
+  });
+
+  svg.addEventListener('mousemove', (e) => {
+    const p = clientToSvg(e.clientX, e.clientY);
+    if (!p) return;
+    const x = Math.round(p.x);
+    const y = Math.round(p.y);
+    chH.setAttribute('y1', y);
+    chH.setAttribute('y2', y);
+    chV.setAttribute('x1', x);
+    chV.setAttribute('x2', x);
+    chDot.setAttribute('cx', x);
+    chDot.setAttribute('cy', y);
+    liveOut.textContent = 'mapX: ' + x + '  ·  mapY: ' + y;
+    liveOut.classList.remove('muted');
+  });
+
+  svg.addEventListener('click', (e) => {
+    const p = clientToSvg(e.clientX, e.clientY);
+    if (!p) return;
+    const x = Math.round(p.x);
+    const y = Math.round(p.y);
+
+    pickedG.setAttribute('transform', 'translate(' + x + ',' + y + ')');
+    pickedG.style.display = '';
+    // The ring centers also need translation; since the parent <g> handles that, just reset their cx/cy
+    pickedDot.setAttribute('cx', 0); pickedDot.setAttribute('cy', 0);
+    pickedRing.setAttribute('cx', 0); pickedRing.setAttribute('cy', 0);
+    pickedRing2.setAttribute('cx', 0); pickedRing2.setAttribute('cy', 0);
+
+    pickedOut.textContent = 'mapX: ' + x + '  ·  mapY: ' + y;
+
+    const yaml = 'mapX: ' + x + '\nmapY: ' + y;
+    copyText.textContent = yaml;
+    copyBlock.style.display = '';
+    copyBtn.textContent = 'Copy';
+    copyBtn.classList.remove('copied');
+  });
+
+  copyBtn.addEventListener('click', () => {
+    navigator.clipboard.writeText(copyText.textContent).then(() => {
+      copyBtn.textContent = 'Copied!';
+      copyBtn.classList.add('copied');
+      setTimeout(() => {
+        copyBtn.textContent = 'Copy';
+        copyBtn.classList.remove('copied');
+      }, 1400);
+    });
+  });
+
+  // "Show" buttons in the existing-pins list — flash the pin on the map
+  document.querySelectorAll('[data-jump-x]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const x = btn.getAttribute('data-jump-x');
+      const y = btn.getAttribute('data-jump-y');
+      pickedG.setAttribute('transform', 'translate(' + x + ',' + y + ')');
+      pickedG.style.display = '';
+      pickedDot.setAttribute('cx', 0); pickedDot.setAttribute('cy', 0);
+      pickedRing.setAttribute('cx', 0); pickedRing.setAttribute('cy', 0);
+      pickedRing2.setAttribute('cx', 0); pickedRing2.setAttribute('cy', 0);
+      pickedOut.textContent = 'mapX: ' + x + '  ·  mapY: ' + y;
+      const yaml = 'mapX: ' + x + '\nmapY: ' + y;
+      copyText.textContent = yaml;
+      copyBlock.style.display = '';
+    });
+  });
+})();
+</script>

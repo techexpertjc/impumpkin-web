@@ -1,0 +1,16 @@
+node_modules/
+_site/
+.cache/
+.DS_Store
+.env
+.env.local
+*.log
+.firebase/
+firebase-debug.log
+.eleventy.cache
+.claude/
+.claude-flow/
+.swarm/
+.mcp.json
+ruvector.db
+claud-mcp-commands.md

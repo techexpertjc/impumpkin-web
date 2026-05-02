@@ -1,0 +1,657 @@
+/* ============================================================
+   BLOGS — ATLAS / JOURNEY PAGE
+   Loaded only on /blogs/ via base.njk extraCss block.
+   Adapted from the original travel-demo.html aesthetic.
+   ============================================================ */
+
+body.page-blogs {
+  /* Override site palette with vintage atlas tones */
+  --parchment: #ede2c4;
+  --parchment-2: #e7dab6;
+  --parchment-light: #f4ebd2;
+  --ink: #1f1a14;
+  --ink-soft: #4a3f2a;
+  --ink-mute: #6b5d44;
+  --aged-red: #b04830;
+  --aged-red-deep: #8e3322;
+  --sepia: #8b6f47;
+  --gold: #a3823c;
+  --moss: #6b7c4e;
+
+  --font-atlas-serif: 'Fraunces', 'Instrument Serif', Georgia, serif;
+  --font-atlas-body: 'Crimson Pro', 'Manrope', Georgia, serif;
+  --font-atlas-mono: 'Space Mono', ui-monospace, monospace;
+  --font-atlas-hand: 'Caveat', 'Brush Script MT', cursive;
+
+  background: var(--parchment);
+  font-family: var(--font-atlas-body);
+  color: var(--ink);
+  scroll-snap-type: y mandatory;
+}
+
+body.page-blogs main {
+  padding-top: 0; /* atlas page has its own scroll system */
+}
+
+/* Header re-tint for the darker parchment */
+body.page-blogs .site-header {
+  background: rgba(237, 226, 196, 0.82);
+  border-bottom-color: rgba(74, 63, 42, 0.18);
+}
+
+/* ─── ATMOSPHERE LAYERS ─── */
+body.page-blogs .atlas-grain {
+  position: fixed; inset: 0; z-index: 80; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 240 240' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.18 0 0 0 0 0.13 0 0 0 0 0.05 0 0 0 0.55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.45;
+  mix-blend-mode: multiply;
+}
+body.page-blogs .atlas-vignette {
+  position: fixed; inset: 0; z-index: 79; pointer-events: none;
+  background:
+    radial-gradient(ellipse at 50% 50%, transparent 50%, rgba(31, 26, 20, 0.18) 100%),
+    radial-gradient(ellipse at 15% 25%, rgba(176, 72, 48, 0.06), transparent 45%),
+    radial-gradient(ellipse at 85% 80%, rgba(107, 124, 78, 0.05), transparent 45%);
+}
+
+/* ─── PAGE FURNITURE (fixed corner labels, page numbers) ─── */
+.atlas-frame {
+  position: fixed; z-index: 70; pointer-events: none;
+  font-family: var(--font-atlas-mono);
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+.atlas-frame.tl { top: 96px; left: 32px; }
+.atlas-frame.tr { top: 96px; right: 32px; text-align: right; }
+.atlas-frame.bl { bottom: 24px; left: 32px; }
+.atlas-frame.br { bottom: 24px; right: 32px; text-align: right; }
+.atlas-frame .page-num {
+  display: inline-block;
+  font-family: var(--font-atlas-serif);
+  font-style: italic;
+  font-size: 13px;
+  color: var(--ink-soft);
+  letter-spacing: 0;
+  text-transform: none;
+  transition: opacity 0.4s;
+}
+
+/* ─── PROGRESS DOTS (left side chapter indicator) ─── */
+.atlas-progress {
+  position: fixed;
+  left: 32px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 70;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  pointer-events: none;
+}
+.atlas-progress-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  border: 1.2px solid var(--ink-soft);
+  background: transparent;
+  transition: background 0.5s, transform 0.5s;
+}
+.atlas-progress-dot.active {
+  background: var(--aged-red);
+  border-color: var(--aged-red);
+  transform: scale(1.4);
+}
+.atlas-progress-dot.passed {
+  background: var(--ink-soft);
+}
+
+/* ─── MAP STAGE (fixed background) ─── */
+.atlas-map-stage {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  display: grid;
+  place-items: center;
+}
+.atlas-map-stage .world-map {
+  width: 100vw;
+  height: 100vh;
+  max-width: 1600px;
+}
+body.page-blogs .world-map .land {
+  fill: var(--parchment-2);
+  stroke: var(--ink-soft);
+  stroke-width: 0.6;
+  opacity: 0.85;
+  vector-effect: non-scaling-stroke;
+}
+body.page-blogs .grid-line {
+  stroke: var(--sepia);
+  stroke-width: 0.4;
+  fill: none;
+  opacity: 0.18;
+}
+body.page-blogs .grid-curve {
+  stroke: var(--sepia);
+  stroke-width: 0.4;
+  fill: none;
+  opacity: 0.14;
+}
+body.page-blogs .compass { opacity: 0.55; }
+body.page-blogs .compass text {
+  font-family: var(--font-atlas-serif);
+  font-size: 9px;
+  fill: var(--ink-soft);
+  letter-spacing: 0.15em;
+}
+body.page-blogs .map-title {
+  font-family: var(--font-atlas-serif);
+  font-size: 14px;
+  fill: var(--ink-soft);
+  letter-spacing: 0.4em;
+  opacity: 0.5;
+}
+body.page-blogs .map-coord {
+  font-family: var(--font-atlas-mono);
+  font-size: 7px;
+  fill: var(--sepia);
+  opacity: 0.55;
+  letter-spacing: 0.05em;
+}
+
+/* Routes (drawn between consecutive destinations) */
+body.page-blogs .route {
+  fill: none;
+  stroke: var(--aged-red);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-dasharray: 5 4;
+}
+body.page-blogs .route-glow {
+  fill: none;
+  stroke: var(--aged-red);
+  stroke-width: 5;
+  stroke-linecap: round;
+  opacity: 0.12;
+  filter: blur(2px);
+}
+
+/* Pins */
+body.page-blogs .pin-group { opacity: 0; cursor: default; }
+body.page-blogs .pin-group.visible { opacity: 1; }
+body.page-blogs .pin-dot { fill: var(--aged-red); }
+body.page-blogs .pin-ring {
+  fill: none;
+  stroke: var(--aged-red);
+  stroke-width: 1.4;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+body.page-blogs .pin-label {
+  font-family: var(--font-atlas-serif);
+  font-weight: 500;
+  font-size: 11px;
+  fill: var(--ink);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+body.page-blogs .pin-roman {
+  font-family: var(--font-atlas-serif);
+  font-weight: 600;
+  font-size: 9px;
+  fill: var(--parchment-light);
+}
+
+/* Plane (animated along routes) */
+body.page-blogs .plane {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+body.page-blogs .plane-body { fill: var(--ink); }
+body.page-blogs .plane-shadow { fill: var(--aged-red-deep); opacity: 0.3; }
+
+/* ─── SNAP CONTAINER + SECTIONS ─── */
+.atlas-snap {
+  position: relative;
+  z-index: 10;
+}
+.atlas-snap section {
+  min-height: 100vh;
+  width: 100%;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  scroll-margin-top: 76px;
+  padding: 80px clamp(24px, 6vw, 100px);
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* ─── INTRO ─── */
+.atlas-intro {
+  justify-content: center;
+  text-align: center;
+  flex-direction: column;
+}
+.atlas-intro-eyebrow {
+  font-family: var(--font-atlas-mono);
+  font-size: 11px;
+  letter-spacing: 0.5em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  margin-bottom: 36px;
+}
+.atlas-intro-eyebrow::before,
+.atlas-intro-eyebrow::after {
+  content: '——————';
+  color: var(--ink-mute);
+  margin: 0 18px;
+  letter-spacing: -0.1em;
+  opacity: 0.6;
+}
+.atlas-intro-title {
+  font-family: var(--font-atlas-serif);
+  font-weight: 300;
+  font-style: italic;
+  font-size: clamp(3.5rem, 9vw, 8rem);
+  line-height: 0.92;
+  letter-spacing: -0.04em;
+  color: var(--ink);
+  font-variation-settings: 'opsz' 144, 'SOFT' 80;
+}
+.atlas-intro-title .amp {
+  font-style: italic;
+  font-weight: 300;
+  color: var(--aged-red);
+  font-size: 1.1em;
+  margin: 0 0.05em;
+}
+.atlas-intro-sub {
+  margin-top: 32px;
+  font-family: var(--font-atlas-serif);
+  font-style: italic;
+  font-size: 1.4rem;
+  color: var(--ink-soft);
+  max-width: 540px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.atlas-intro-byline {
+  margin-top: 56px;
+  font-family: var(--font-atlas-hand);
+  font-size: 1.6rem;
+  color: var(--aged-red);
+}
+.atlas-intro-scroll {
+  position: absolute;
+  bottom: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-atlas-mono);
+  font-size: 10px;
+  letter-spacing: 0.4em;
+  color: var(--ink-mute);
+  text-transform: uppercase;
+  animation: atlasBob 2.4s ease-in-out infinite;
+}
+.atlas-intro-scroll::after {
+  content: '';
+  display: block;
+  width: 1px; height: 32px;
+  background: var(--ink-mute);
+  margin: 12px auto 0;
+}
+@keyframes atlasBob {
+  0%, 100% { transform: translate(-50%, 0); opacity: 0.7; }
+  50%      { transform: translate(-50%, 6px); opacity: 1; }
+}
+
+/* ─── DESTINATION SECTION ─── */
+.atlas-dest {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 60px;
+  align-items: center;
+}
+
+.atlas-dest-content {
+  max-width: 520px;
+  padding: 32px;
+  background: linear-gradient(135deg, rgba(244, 235, 210, 0.92), rgba(237, 226, 196, 0.85));
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  border: 1px solid rgba(74, 63, 42, 0.15);
+  box-shadow:
+    0 20px 50px -20px rgba(31, 26, 20, 0.25),
+    inset 0 0 0 1px rgba(244, 235, 210, 0.4);
+  position: relative;
+}
+.atlas-dest-content::before {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  border: 1px solid rgba(139, 111, 71, 0.2);
+  pointer-events: none;
+}
+
+.atlas-dest-numeral {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+.atlas-roman {
+  font-family: var(--font-atlas-serif);
+  font-style: italic;
+  font-weight: 300;
+  font-size: 4rem;
+  color: var(--aged-red);
+  line-height: 1;
+  font-variation-settings: 'opsz' 144;
+}
+.atlas-chapter {
+  font-family: var(--font-atlas-mono);
+  font-size: 10px;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+.atlas-dest-title {
+  font-family: var(--font-atlas-serif);
+  font-weight: 400;
+  font-size: clamp(2.4rem, 5vw, 4.2rem);
+  line-height: 1;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  margin: 8px 0 4px;
+  font-variation-settings: 'opsz' 144, 'SOFT' 60;
+}
+.atlas-dest-title .accent {
+  font-style: italic;
+  font-weight: 300;
+  color: var(--aged-red);
+}
+.atlas-dest-region {
+  font-family: var(--font-atlas-body);
+  font-style: italic;
+  font-size: 1.05rem;
+  color: var(--ink-soft);
+}
+.atlas-dest-coords {
+  font-family: var(--font-atlas-mono);
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  color: var(--sepia);
+  margin-top: 4px;
+}
+
+.atlas-ornament {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 22px 0;
+}
+.atlas-ornament-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--ink-soft), transparent);
+  opacity: 0.55;
+}
+.atlas-ornament-mark {
+  color: var(--aged-red);
+  font-family: var(--font-atlas-serif);
+  font-size: 18px;
+  line-height: 1;
+}
+
+.atlas-dest-text {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--ink-soft);
+  margin-bottom: 24px;
+}
+.atlas-dest-text::first-letter {
+  font-family: var(--font-atlas-serif);
+  font-style: italic;
+  font-size: 2.6em;
+  float: left;
+  line-height: 0.85;
+  margin: 6px 6px 0 0;
+  color: var(--aged-red);
+}
+
+.atlas-dest-tags {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+  font-family: var(--font-atlas-hand);
+  font-size: 1.25rem;
+  color: var(--ink-soft);
+  margin-bottom: 24px;
+}
+.atlas-dest-tags span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.atlas-dest-tags span::before {
+  content: '✶';
+  color: var(--aged-red);
+  font-size: 0.8em;
+}
+
+.atlas-dest-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-atlas-mono);
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--ink);
+  border-bottom: 1.5px solid var(--aged-red);
+  padding-bottom: 4px;
+  transition: gap 0.2s, color 0.2s;
+}
+.atlas-dest-cta:hover { gap: 14px; color: var(--aged-red); }
+
+/* ─── PHOTO POLAROID STAGE ─── */
+.atlas-dest-photo-stage {
+  position: relative;
+  height: 70vh;
+  display: grid;
+  place-items: center;
+}
+
+.atlas-polaroid {
+  background: #faf2dc;
+  padding: 14px 14px 50px;
+  box-shadow:
+    0 30px 60px -20px rgba(31, 26, 20, 0.45),
+    0 10px 25px -10px rgba(31, 26, 20, 0.3),
+    inset 0 0 0 1px rgba(74, 63, 42, 0.08);
+  transform: rotate(-3deg);
+  position: relative;
+  width: 360px;
+  max-width: 80%;
+}
+/* Tape strip across top */
+.atlas-polaroid::before {
+  content: '';
+  position: absolute;
+  top: -18px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-2deg);
+  width: 90px;
+  height: 26px;
+  background: linear-gradient(to bottom, rgba(176, 72, 48, 0.45), rgba(176, 72, 48, 0.6));
+  box-shadow: 0 2px 6px rgba(31, 26, 20, 0.2);
+  opacity: 0.7;
+}
+.atlas-polaroid img {
+  width: 100%;
+  aspect-ratio: 4/5;
+  object-fit: cover;
+  display: block;
+  filter: sepia(0.18) saturate(0.92) contrast(1.02);
+  background: var(--parchment-2);
+}
+.atlas-polaroid-caption {
+  text-align: center;
+  margin-top: 12px;
+  font-family: var(--font-atlas-hand);
+  font-size: 1.4rem;
+  color: var(--ink-soft);
+}
+
+/* Stamps + tickets — variation by section index */
+.atlas-stamp {
+  position: absolute;
+  width: 130px;
+  height: 130px;
+  border: 3px double var(--aged-red);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: var(--aged-red);
+  font-family: var(--font-atlas-serif);
+  font-weight: 700;
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+  text-align: center;
+  line-height: 1.25;
+  opacity: 0.78;
+  background: radial-gradient(circle, rgba(176, 72, 48, 0.04), transparent 70%);
+  text-transform: uppercase;
+}
+.atlas-stamp::before {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  border: 1px solid var(--aged-red);
+  border-radius: 50%;
+  opacity: 0.5;
+}
+.atlas-stamp.pos-0 { top: 30px; right: 20px; transform: rotate(-14deg); }
+.atlas-stamp.pos-1 { bottom: 80px; left: 30px; transform: rotate(8deg); }
+.atlas-stamp.pos-2 { top: 60px; left: 30px; transform: rotate(-22deg); }
+.atlas-stamp.pos-3 { bottom: 40px; right: 30px; transform: rotate(12deg); }
+
+.atlas-ticket {
+  position: absolute;
+  background: var(--parchment-light);
+  padding: 12px 18px;
+  border: 1px dashed var(--ink-soft);
+  font-family: var(--font-atlas-mono);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  box-shadow: 0 8px 16px -8px rgba(31, 26, 20, 0.3);
+  line-height: 1.6;
+}
+.atlas-ticket b {
+  font-family: var(--font-atlas-serif);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: var(--ink);
+}
+.atlas-ticket.pos-0 { top: 78%; right: 6%; transform: rotate(6deg); }
+.atlas-ticket.pos-1 { top: 12%; left: 5%; transform: rotate(-7deg); }
+.atlas-ticket.pos-2 { bottom: 10%; right: 5%; transform: rotate(-5deg); }
+.atlas-ticket.pos-3 { top: 15%; right: 5%; transform: rotate(8deg); }
+
+/* ─── OUTRO ─── */
+.atlas-outro {
+  justify-content: center;
+  text-align: center;
+  flex-direction: column;
+}
+.atlas-outro-stat {
+  font-family: var(--font-atlas-mono);
+  font-size: 11px;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  margin-bottom: 24px;
+}
+.atlas-outro-title {
+  font-family: var(--font-atlas-serif);
+  font-weight: 300;
+  font-style: italic;
+  font-size: clamp(2.4rem, 6vw, 5rem);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  max-width: 880px;
+  margin: 0 auto;
+  font-variation-settings: 'opsz' 144, 'SOFT' 80;
+}
+.atlas-outro-title .accent { color: var(--aged-red); }
+.atlas-outro-stats {
+  display: flex;
+  gap: 80px;
+  margin-top: 56px;
+  justify-content: center;
+}
+.atlas-outro-stat-block .num {
+  font-family: var(--font-atlas-serif);
+  font-weight: 300;
+  font-size: 3.5rem;
+  color: var(--aged-red);
+  line-height: 1;
+}
+.atlas-outro-stat-block .label {
+  font-family: var(--font-atlas-mono);
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  margin-top: 8px;
+}
+.atlas-outro-sign {
+  margin-top: 64px;
+  font-family: var(--font-atlas-hand);
+  font-size: 2rem;
+  color: var(--aged-red);
+}
+
+/* ─── INITIAL STATES (for GSAP entry animations) ─── */
+.atlas-dest-content > * { opacity: 0; transform: translateY(18px); }
+.atlas-dest-photo-stage .atlas-polaroid,
+.atlas-dest-photo-stage .atlas-stamp,
+.atlas-dest-photo-stage .atlas-ticket { opacity: 0; }
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 900px) {
+  .atlas-snap section { padding: 60px 24px; }
+  .atlas-dest {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    align-content: center;
+  }
+  .atlas-dest-content { padding: 22px; max-width: 100%; }
+  .atlas-dest-photo-stage { height: 42vh; }
+  .atlas-polaroid { width: 240px; padding: 10px 10px 36px; }
+  .atlas-polaroid-caption { font-size: 1.1rem; }
+  .atlas-stamp { width: 80px; height: 80px; font-size: 0.55rem; }
+  .atlas-ticket { font-size: 8px; padding: 8px 12px; }
+  .atlas-progress { left: 14px; gap: 12px; }
+  .atlas-frame.tl, .atlas-frame.tr { top: 90px; }
+  .atlas-frame.bl, .atlas-frame.br { bottom: 14px; }
+  .atlas-frame.tl, .atlas-frame.bl { left: 18px; }
+  .atlas-frame.tr, .atlas-frame.br { right: 18px; }
+  .atlas-frame { font-size: 8px; }
+  .atlas-outro-stats { gap: 36px; flex-wrap: wrap; }
+  .atlas-roman { font-size: 3rem; }
+}
+
+/* Disable snap on small screens — feels too rigid on mobile */
+@media (max-width: 700px) {
+  body.page-blogs { scroll-snap-type: none; }
+  .atlas-snap section { scroll-snap-align: none; }
+}

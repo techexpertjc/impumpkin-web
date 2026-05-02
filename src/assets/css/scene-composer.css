@@ -1,0 +1,419 @@
+/* ============================================================
+   SCENE COMPOSER
+   Renders per-post illustrated scenes on the home page.
+   Each scene has a `data-preset` and contains layered elements
+   placed into named position slots (sky-left, far-full, etc.)
+   ============================================================ */
+
+/* ─── PRESET PALETTES ─── */
+/* Each preset sets sky/water gradient stops AND element colors.
+   Element colors flow via `currentColor` to most SVG symbols. */
+
+/* SKYSCAPE PRESETS */
+.scene[data-preset="sunrise"] {
+  --c-sky-1: #fde8d8; --c-sky-2: #f8c0a0; --c-sky-3: #e88aa6;
+  --c-far: #6a3848; --c-mid: #4a2438; --c-front: #1f0e1c;
+  --c-sky-deco: #ffd9b8; --c-text: #2a1018; --c-text-soft: #5a2838;
+  --c-title: rgba(42,16,24,0.9); --c-accent: #d96e3c;
+}
+.scene[data-preset="sunset"] {
+  --c-sky-1: #fbe5a8; --c-sky-2: #f4a85e; --c-sky-3: #c44b6c;
+  --c-far: #5a2848; --c-mid: #3a1838; --c-front: #1a0820;
+  --c-sky-deco: #ffd28a; --c-text: #2a1020; --c-text-soft: #5a2848;
+  --c-title: rgba(42,16,32,0.92); --c-accent: #ff8a3a;
+}
+.scene[data-preset="golden_hour"] {
+  --c-sky-1: #fef0c8; --c-sky-2: #f5c878; --c-sky-3: #d89048;
+  --c-far: #6a4828; --c-mid: #3a2818; --c-front: #1a1008;
+  --c-sky-deco: #fdd28a; --c-text: #2a1810; --c-text-soft: #5a3828;
+  --c-title: rgba(42,24,16,0.92); --c-accent: #c4742c;
+}
+.scene[data-preset="clear_day"] {
+  --c-sky-1: #d4ecf7; --c-sky-2: #8ec5e0; --c-sky-3: #4a9bc4;
+  --c-far: #2a4a6a; --c-mid: #1a3050; --c-front: #0a1828;
+  --c-sky-deco: #ffffff; --c-text: #0a1828; --c-text-soft: #2a4a6a;
+  --c-title: rgba(10,24,40,0.92); --c-accent: #1f5d8a;
+}
+.scene[data-preset="overcast"] {
+  --c-sky-1: #e8e8e8; --c-sky-2: #b8c4c8; --c-sky-3: #8a9aa0;
+  --c-far: #5a6870; --c-mid: #3a464c; --c-front: #1a2228;
+  --c-sky-deco: #ffffff; --c-text: #1a2228; --c-text-soft: #4a5860;
+  --c-title: rgba(26,34,40,0.85); --c-accent: #6a7880;
+}
+.scene[data-preset="twilight"] {
+  --c-sky-1: #4a3868; --c-sky-2: #7a4a98; --c-sky-3: #c87aa0;
+  --c-far: #2a1a48; --c-mid: #180a30; --c-front: #08041a;
+  --c-sky-deco: #ffd28a; --c-text: #f4e8d8; --c-text-soft: #d4b8c8;
+  --c-title: rgba(244,232,216,0.95); --c-accent: #ffa4c8;
+}
+.scene[data-preset="starry_night"] {
+  --c-sky-1: #1a2848; --c-sky-2: #0a1430; --c-sky-3: #050818;
+  --c-far: #0a1838; --c-mid: #050d20; --c-front: #02050f;
+  --c-sky-deco: #fef0c8; --c-text: #e8e0d4; --c-text-soft: #a8b0c0;
+  --c-title: rgba(232,224,212,0.95); --c-accent: #ffd87a;
+}
+.scene[data-preset="beach_day"] {
+  --c-sky-1: #b8e8f0; --c-sky-2: #7fc8e8; --c-sky-3: #5aa8d4;
+  --c-far: #2a7898; --c-mid: #1a4868; --c-front: #e8c890;
+  --c-sky-deco: #fef8c8; --c-text: #1a3848; --c-text-soft: #2a5868;
+  --c-title: rgba(26,56,72,0.92); --c-accent: #f4a85e;
+}
+
+/* UNDERWATER PRESETS */
+.scene[data-preset="sunlit_shallows"] {
+  --c-sky-1: #b8e8e8; --c-sky-2: #7fc8d4; --c-sky-3: #4a98b0;
+  --c-far: #2a6a80; --c-mid: #1a4858; --c-front: #082838;
+  --c-sky-deco: #ffffff; --c-text: #f4f8fa; --c-text-soft: #b8d4dc;
+  --c-title: rgba(244,248,250,0.95); --c-accent: #ffd87a;
+}
+.scene[data-preset="deep_blue"] {
+  --c-sky-1: #2a4870; --c-sky-2: #18305a; --c-sky-3: #0a1a3a;
+  --c-far: #0a1830; --c-mid: #050d20; --c-front: #020610;
+  --c-sky-deco: #b8d8ff; --c-text: #d4e0f0; --c-text-soft: #8a9cb8;
+  --c-title: rgba(212,224,240,0.95); --c-accent: #6abff0;
+}
+.scene[data-preset="coral_reef"] {
+  --c-sky-1: #d8e8d8; --c-sky-2: #88b8c8; --c-sky-3: #4a98b0;
+  --c-far: #6a4868; --c-mid: #38284a; --c-front: #1a0e2a;
+  --c-sky-deco: #ffffff; --c-text: #2a1828; --c-text-soft: #5a3858;
+  --c-title: rgba(42,24,40,0.92); --c-accent: #d96e3c;
+}
+.scene[data-preset="twilight_ocean"] {
+  --c-sky-1: #1a3858; --c-sky-2: #0a1a3a; --c-sky-3: #050a20;
+  --c-far: #0a1838; --c-mid: #050d20; --c-front: #02050f;
+  --c-sky-deco: #c8d8ff; --c-text: #e0e8f4; --c-text-soft: #98a8c0;
+  --c-title: rgba(224,232,244,0.95); --c-accent: #88c8ff;
+}
+
+/* ─── BASE SCENE STRUCTURE ─── */
+/* These are the layer wrappers. parallax.js animates these. */
+.scene-featured {
+  background: var(--c-sky-1);
+}
+.scene-featured .layer-sky {
+  background: linear-gradient(180deg, var(--c-sky-1) 0%, var(--c-sky-2) 60%, var(--c-sky-3) 100%);
+}
+.scene-featured .layer-sky,
+.scene-featured .layer-far,
+.scene-featured .layer-mid,
+.scene-featured .layer-front {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* ─── ELEMENT BASE STYLE ─── */
+.scene-el {
+  position: absolute;
+  display: block;
+  pointer-events: none;
+}
+.scene-el svg, .scene-el use {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* ─── COLOR FLOW ─── */
+/* Far/mid/front layers each set color so SVG currentColor picks it up. */
+.scene-featured .layer-far    { color: var(--c-far); }
+.scene-featured .layer-mid    { color: var(--c-mid); }
+.scene-featured .layer-front  { color: var(--c-front); }
+.scene-featured .layer-sky    { color: var(--c-sky-deco); }
+
+/* ─── POSITION SLOTS ─── */
+
+/* Sky decorations — pinned in the upper half */
+.slot-sky-left   { top: 8%;  left: 6%;   width: 18%;  max-width: 220px; }
+.slot-sky-center { top: 6%;  left: 50%;  width: 18%;  max-width: 220px; transform: translateX(-50%); }
+.slot-sky-right  { top: 8%;  right: 6%;  width: 18%;  max-width: 220px; }
+
+/* Sky-decoration size variants for elements that need to be smaller/larger */
+.scene-el.el-cloud-soft, .scene-el.el-cloud-wisp { width: 32%; max-width: 460px; }
+.scene-el.el-twinkling-stars { top: 0; left: 0; width: 100%; height: 60%; max-width: none; transform: none; }
+.scene-el.el-flying-birds    { width: 24%; max-width: 320px; }
+.scene-el.el-aurora-band     { top: 0; left: 0; width: 100%; height: 50%; max-width: none; transform: none; }
+.scene-el.el-hot-air-balloon { width: 9%; max-width: 140px; }
+
+/* Far layer — large background features, full width */
+.slot-far-full { left: 0; bottom: 0; width: 100%; height: 70%; }
+.scene-el[data-layer="far"] svg { height: 100%; width: 100%; }
+
+/* Mid layer — also full width but smaller height */
+.slot-mid-full { left: 0; bottom: 0; width: 100%; height: 50%; }
+
+/* Front layer — closest to viewer, full width near bottom */
+.slot-front-full { left: 0; bottom: 0; width: 100%; height: 45%; }
+
+/* Some front elements should sit lower or fuller */
+.scene-el.el-palm-trees       { height: 90%; }
+.scene-el.el-cherry-blossom   { height: 70%; }
+.scene-el.el-jungle-leaves    { height: 70%; }
+.scene-el.el-pine-cluster     { height: 70%; }
+.scene-el.el-sandy-shore      { height: 32%; }
+.scene-el.el-ocean-waves      { height: 35%; }
+.scene-el.el-snow-drift       { height: 32%; }
+.scene-el.el-rocks-cluster    { height: 35%; }
+
+/* ─── UNDERWATER POSITIONS ─── */
+/* Underwater "far" creatures float in deeper water — center-ish */
+.scene[data-type="underwater"] .slot-far-left   { left: 4%;  top: 30%; width: 28%; height: auto; aspect-ratio: 2/1; }
+.scene[data-type="underwater"] .slot-far-center { left: 50%; top: 25%; width: 32%; height: auto; aspect-ratio: 2/1; transform: translateX(-50%); }
+.scene[data-type="underwater"] .slot-far-right  { right: 4%; top: 30%; width: 28%; height: auto; aspect-ratio: 2/1; }
+
+.scene[data-type="underwater"] .slot-mid-left   { left: 8%;  top: 50%; width: 16%; }
+.scene[data-type="underwater"] .slot-mid-center { left: 50%; top: 45%; width: 18%; transform: translateX(-50%); }
+.scene[data-type="underwater"] .slot-mid-right  { right: 8%; top: 50%; width: 16%; }
+
+/* Specific size overrides for underwater creatures */
+.scene-el.el-jellyfish { aspect-ratio: 200/320; height: auto; }
+.scene-el.el-jellyfish-school { aspect-ratio: 800/500; height: auto; }
+.scene-el.el-octopus    { aspect-ratio: 1/1; height: auto; }
+.scene-el.el-seahorse   { aspect-ratio: 200/320; height: auto; width: 8%; }
+.scene-el.el-clownfish-pair  { aspect-ratio: 500/240; height: auto; }
+.scene-el.el-angelfish       { aspect-ratio: 320/360; height: auto; width: 10%; }
+.scene-el.el-blue-tang-school { aspect-ratio: 600/400; height: auto; }
+.scene-el.el-sea-turtle-far   { aspect-ratio: 320/200; height: auto; }
+.scene-el.el-sea-turtle-close { aspect-ratio: 400/280; height: auto; }
+.scene-el.el-manta-ray        { aspect-ratio: 600/300; height: auto; }
+.scene-el.el-fish-school-large { aspect-ratio: 800/400; height: auto; }
+.scene-el.el-sunken-ship      { aspect-ratio: 600/320; height: auto; }
+.scene-el.el-sunken-anchor    { aspect-ratio: 200/280; height: auto; }
+.scene-el.el-sea-fan          { height: 50%; }
+.scene-el.el-anemone-cluster  { height: 35%; }
+.scene-el.el-coral-reef       { height: 50%; }
+.scene-el.el-kelp-forest      { height: 90%; }
+.scene-el.el-sandy-bottom     { height: 25%; }
+
+/* ─── LIGHT RAYS (underwater) ─── */
+.scene[data-type="underwater"] .layer-sky {
+  background: linear-gradient(180deg, var(--c-sky-1) 0%, var(--c-sky-2) 50%, var(--c-sky-3) 100%);
+}
+.scene-el.el-light-rays-strong,
+.scene-el.el-light-rays-soft {
+  top: 0; left: 0; width: 100%; height: 100%;
+  max-width: none; transform: none;
+  animation: rayShimmer 8s ease-in-out infinite;
+}
+@keyframes rayShimmer {
+  0%, 100% { opacity: 0.6; transform: translateX(0); }
+  50%      { opacity: 0.95; transform: translateX(2%); }
+}
+
+/* ─── SUBTLE ANIMATIONS ─── */
+
+/* Hot-air balloon gentle bob */
+.scene-el.el-hot-air-balloon { animation: balloonBob 6s ease-in-out infinite; }
+@keyframes balloonBob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-12px); }
+}
+
+/* Jellyfish drift */
+.scene-el.el-jellyfish, .scene-el.el-jellyfish-school {
+  animation: jellyDrift 7s ease-in-out infinite;
+}
+@keyframes jellyDrift {
+  0%, 100% { transform: translateY(0) translateX(-50%); }
+  50%      { transform: translateY(-18px) translateX(-50%); }
+}
+.scene-el.el-jellyfish:not([class*="center"]),
+.scene-el.el-jellyfish-school:not([class*="center"]) {
+  animation: jellyDriftSimple 7s ease-in-out infinite;
+}
+@keyframes jellyDriftSimple {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-18px); }
+}
+
+/* Fish schools sway */
+.scene-el.el-fish-school-large,
+.scene-el.el-blue-tang-school {
+  animation: fishSway 9s ease-in-out infinite;
+}
+@keyframes fishSway {
+  0%, 100% { transform: translateX(-2%); }
+  50%      { transform: translateX(2%); }
+}
+
+/* Manta ray glide */
+.scene-el.el-manta-ray { animation: mantaGlide 14s linear infinite; }
+@keyframes mantaGlide {
+  0%   { transform: translateX(-50%) translateX(-30vw); }
+  100% { transform: translateX(-50%) translateX(30vw); }
+}
+
+/* Flying birds glide */
+.scene-el.el-flying-birds { animation: birdsGlide 18s linear infinite; }
+@keyframes birdsGlide {
+  0%   { transform: translateX(-20vw); opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { transform: translateX(120vw); opacity: 0; }
+}
+
+/* ─── ATMOSPHERE OVERLAYS (CSS-only) ─── */
+.atmosphere {
+  position: absolute; inset: 0;
+  pointer-events: none;
+  z-index: 7;
+  overflow: hidden;
+}
+
+/* Falling snow */
+.atmosphere.snow::before,
+.atmosphere.snow::after {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    radial-gradient(2px 2px at 20% 30%, rgba(255,255,255,0.85), transparent),
+    radial-gradient(1.5px 1.5px at 60% 70%, rgba(255,255,255,0.7), transparent),
+    radial-gradient(2.5px 2.5px at 80% 10%, rgba(255,255,255,0.9), transparent),
+    radial-gradient(1px 1px at 30% 60%, rgba(255,255,255,0.6), transparent),
+    radial-gradient(2px 2px at 70% 40%, rgba(255,255,255,0.8), transparent),
+    radial-gradient(1.5px 1.5px at 10% 80%, rgba(255,255,255,0.7), transparent),
+    radial-gradient(2px 2px at 50% 20%, rgba(255,255,255,0.85), transparent),
+    radial-gradient(1px 1px at 90% 90%, rgba(255,255,255,0.6), transparent);
+  background-size: 100% 100%;
+  animation: snowFall 12s linear infinite;
+}
+.atmosphere.snow::after {
+  background-image:
+    radial-gradient(1.5px 1.5px at 15% 50%, rgba(255,255,255,0.7), transparent),
+    radial-gradient(2px 2px at 45% 25%, rgba(255,255,255,0.85), transparent),
+    radial-gradient(1px 1px at 75% 65%, rgba(255,255,255,0.5), transparent),
+    radial-gradient(2.5px 2.5px at 25% 85%, rgba(255,255,255,0.9), transparent),
+    radial-gradient(1.5px 1.5px at 65% 15%, rgba(255,255,255,0.75), transparent);
+  animation: snowFall 18s linear infinite;
+  animation-delay: -3s;
+}
+@keyframes snowFall {
+  0%   { transform: translateY(-110%); }
+  100% { transform: translateY(110%); }
+}
+
+/* Falling rain */
+.atmosphere.rain::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(180deg, transparent 60%, rgba(180,200,220,0.5) 60%, rgba(180,200,220,0.5) 65%, transparent 65%),
+    linear-gradient(180deg, transparent 30%, rgba(180,200,220,0.45) 30%, rgba(180,200,220,0.45) 35%, transparent 35%);
+  background-size: 4px 30px, 5px 40px;
+  background-position: 0 0, 12px 8px;
+  animation: rainFall 0.6s linear infinite;
+  opacity: 0.7;
+}
+@keyframes rainFall {
+  0%   { transform: translateY(-20%); }
+  100% { transform: translateY(110%); }
+}
+
+/* Fog overlay */
+.atmosphere.fog {
+  background:
+    radial-gradient(ellipse at 30% 60%, rgba(255,255,255,0.35), transparent 50%),
+    radial-gradient(ellipse at 70% 40%, rgba(255,255,255,0.3), transparent 50%),
+    radial-gradient(ellipse at 50% 80%, rgba(255,255,255,0.4), transparent 60%);
+  opacity: 0.7;
+  animation: fogDrift 22s ease-in-out infinite;
+}
+@keyframes fogDrift {
+  0%, 100% { transform: translateX(-3%); }
+  50%      { transform: translateX(3%); }
+}
+
+/* Fireflies */
+.atmosphere.fireflies::before,
+.atmosphere.fireflies::after {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    radial-gradient(3px 3px at 15% 70%, rgba(255,220,120,0.95), transparent),
+    radial-gradient(2px 2px at 35% 50%, rgba(255,220,120,0.85), transparent),
+    radial-gradient(2.5px 2.5px at 55% 80%, rgba(255,220,120,0.9), transparent),
+    radial-gradient(2px 2px at 75% 60%, rgba(255,220,120,0.85), transparent),
+    radial-gradient(3px 3px at 85% 75%, rgba(255,220,120,0.95), transparent),
+    radial-gradient(2px 2px at 25% 90%, rgba(255,220,120,0.85), transparent);
+  filter: blur(0.5px);
+  animation: fireflyFlicker 3s ease-in-out infinite;
+}
+.atmosphere.fireflies::after {
+  background-image:
+    radial-gradient(2px 2px at 45% 65%, rgba(255,220,120,0.9), transparent),
+    radial-gradient(3px 3px at 65% 85%, rgba(255,220,120,0.95), transparent),
+    radial-gradient(2px 2px at 20% 55%, rgba(255,220,120,0.8), transparent);
+  animation: fireflyFlicker 4s ease-in-out infinite;
+  animation-delay: -1.5s;
+}
+@keyframes fireflyFlicker {
+  0%, 100% { opacity: 0.4; }
+  50%      { opacity: 1; }
+}
+
+/* Rising bubbles (underwater) */
+.atmosphere.bubbles::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    radial-gradient(circle at 15% 90%, rgba(255,255,255,0.6) 4px, transparent 5px),
+    radial-gradient(circle at 35% 70%, rgba(255,255,255,0.5) 3px, transparent 4px),
+    radial-gradient(circle at 55% 85%, rgba(255,255,255,0.55) 5px, transparent 6px),
+    radial-gradient(circle at 75% 75%, rgba(255,255,255,0.5) 3px, transparent 4px),
+    radial-gradient(circle at 85% 90%, rgba(255,255,255,0.6) 4px, transparent 5px),
+    radial-gradient(circle at 25% 50%, rgba(255,255,255,0.4) 3px, transparent 4px),
+    radial-gradient(circle at 65% 60%, rgba(255,255,255,0.45) 4px, transparent 5px);
+  animation: bubbleRise 12s linear infinite;
+}
+@keyframes bubbleRise {
+  0%   { transform: translateY(20%); opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { transform: translateY(-110%); opacity: 0; }
+}
+
+/* Drifting plankton particles (underwater) */
+.atmosphere.particles::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,0.5), transparent),
+    radial-gradient(1px 1px at 30% 50%, rgba(255,255,255,0.4), transparent),
+    radial-gradient(1.5px 1.5px at 50% 30%, rgba(255,255,255,0.55), transparent),
+    radial-gradient(1px 1px at 70% 70%, rgba(255,255,255,0.45), transparent),
+    radial-gradient(1px 1px at 90% 40%, rgba(255,255,255,0.5), transparent),
+    radial-gradient(1px 1px at 20% 80%, rgba(255,255,255,0.4), transparent),
+    radial-gradient(1.5px 1.5px at 60% 90%, rgba(255,255,255,0.5), transparent),
+    radial-gradient(1px 1px at 40% 10%, rgba(255,255,255,0.4), transparent);
+  animation: particleDrift 25s linear infinite;
+  opacity: 0.7;
+}
+@keyframes particleDrift {
+  0%   { transform: translate(0, 0); }
+  50%  { transform: translate(2%, -1%); }
+  100% { transform: translate(0, 0); }
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .atmosphere.snow::before,
+  .atmosphere.snow::after,
+  .atmosphere.rain::before,
+  .atmosphere.fog,
+  .atmosphere.fireflies::before,
+  .atmosphere.fireflies::after,
+  .atmosphere.bubbles::before,
+  .atmosphere.particles::before,
+  .scene-el.el-hot-air-balloon,
+  .scene-el.el-jellyfish,
+  .scene-el.el-jellyfish-school,
+  .scene-el.el-fish-school-large,
+  .scene-el.el-blue-tang-school,
+  .scene-el.el-manta-ray,
+  .scene-el.el-flying-birds,
+  .scene-el.el-light-rays-strong,
+  .scene-el.el-light-rays-soft {
+    animation: none;
+  }
+}
