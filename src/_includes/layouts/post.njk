@@ -44,12 +44,22 @@ layout: layouts/base.njk
     <h2>More from this trip</h2>
     <div class="post-gallery-grid">
       {%- for img in gallery -%}
-        <a href="{{ img.src }}" class="gallery-item">
+        <a href="{{ img.src }}" class="gallery-item" data-caption="{{ img.alt or '' }}">
           <img src="{{ img.src }}" alt="{{ img.alt or title }}" loading="lazy">
         </a>
       {%- endfor -%}
     </div>
   </section>
+
+  <!-- Lightbox -->
+  <div class="lightbox" data-lightbox aria-hidden="true">
+    <button class="lightbox-close" aria-label="Close">×</button>
+    <button class="lightbox-prev" aria-label="Previous">‹</button>
+    <button class="lightbox-next" aria-label="Next">›</button>
+    <img class="lightbox-image" alt="">
+    <p class="lightbox-caption"></p>
+  </div>
+  <script type="module" src="/assets/js/gallery.js"></script>
   {% endif %}
 
   <footer class="post-footer">

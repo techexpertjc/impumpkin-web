@@ -176,13 +176,35 @@ function loadScript(src) {
   });
 
   // ─── Map breathing parallax ───
-  gsap.to(".world-map", {
+  let mapBreathingTween = gsap.to(".world-map", {
     scale: 1.03,
     ease: "none",
     scrollTrigger: { trigger: "body", start: "top top", end: "bottom bottom", scrub: 2 }
   });
 
   window.addEventListener("load", () => ScrollTrigger.refresh());
+
+  // ─── Hide loading overlay once everything is ready ───
+  const loadingOverlay = document.getElementById("loading-overlay");
+  if (loadingOverlay) {
+    // Ensure window is fully loaded AND GSAP is initialized
+    const hideLoader = () => {
+      // Small delay to ensure all initial animations have started
+      setTimeout(() => {
+        loadingOverlay.classList.add("loaded");
+        // Remove from DOM after transition completes
+        setTimeout(() => {
+          loadingOverlay.remove();
+        }, 800); // Match CSS transition duration
+      }, 300);
+    };
+
+    if (document.readyState === "complete") {
+      hideLoader();
+    } else {
+      window.addEventListener("load", hideLoader);
+    }
+  }
 
   // ─── Country Detail Zoom ───
   const countryDetailOverlay = document.getElementById("country-detail-overlay");
@@ -203,75 +225,117 @@ function loadScript(src) {
   }
 
   function showCountryDetail(countryName) {
-    // Find the country section to get its bounds
+    // Find the country section to get its center position
     const countrySection = document.querySelector(`.atlas-dest[data-country="${countryName}"]`);
 
-    if (countrySection && countrySection.dataset.bounds) {
-      const bounds = JSON.parse(countrySection.dataset.bounds);
+    if (countrySection && countrySection.dataset.centerX) {
+      const centerX = parseFloat(countrySection.dataset.centerX);
+      const centerY = parseFloat(countrySection.dataset.centerY);
 
-      // Add padding
-      const padding = 100;
-      const width = (bounds.maxX - bounds.minX) + padding * 2;
-      const height = (bounds.maxY - bounds.minY) + padding * 2;
+      // Convert SVG coordinates to percentages for transform-origin
+      // viewBox is "-4.1 0.4 968.2 506.2"
+      const viewBoxWidth = 968.2;
+      const viewBoxHeight = 506.2;
+      const viewBoxX = -4.1;
+      const viewBoxY = 0.4;
 
-      // Calculate zoom scale (limit to 4x max zoom)
-      const scaleX = 968.2 / width;
-      const scaleY = 506.2 / height;
-      const scale = Math.min(scaleX, scaleY, 4);
+      const originX = ((centerX - viewBoxX) / viewBoxWidth) * 100;
+      const originY = ((centerY - viewBoxY) / viewBoxHeight) * 100;
+      const transformOrigin = `${originX}% ${originY}%`;
 
-      // Calculate new viewBox
-      const newWidth = 968.2 / scale;
-      const newHeight = 506.2 / scale;
-      const newX = bounds.centerX - newWidth / 2;
-      const newY = bounds.centerY - newHeight / 2;
+      // Create a timeline for sequenced animations
+      const tl = gsap.timeline();
 
-      // Zoom the map
+      // 1. Kill the map breathing animation and zoom using CSS transform
       const worldMap = document.querySelector(".world-map");
       if (worldMap) {
-        gsap.to(worldMap, {
-          attr: { viewBox: `${newX} ${newY} ${newWidth} ${newHeight}` },
+        // Kill the breathing parallax animation
+        if (mapBreathingTween && mapBreathingTween.scrollTrigger) {
+          mapBreathingTween.scrollTrigger.kill();
+        }
+        mapBreathingTween.kill();
+
+        tl.to(worldMap, {
+          scale: 4,
+          transformOrigin: transformOrigin,
           duration: 1.2,
-          ease: "power2.inOut"
+          ease: "power2.inOut",
+          clearProps: "none", // Don't clear properties after animation
+          overwrite: true // Overwrite the breathing animation
         });
       }
-    }
 
-    // Hide scroll-snap container
-    if (snapContainer) {
-      gsap.to(snapContainer, { opacity: 0, duration: 0.4, onComplete: () => {
-        snapContainer.style.display = "none";
-      }});
-    }
-
-    // Show overlay and detail view
-    if (countryDetailOverlay) {
-      countryDetailOverlay.style.display = "block";
-      gsap.fromTo(countryDetailOverlay, { opacity: 0 }, { opacity: 1, duration: 0.8, delay: 0.4 });
-    }
-
-    // Show the specific country's detail view
-    const allDetailViews = document.querySelectorAll(".country-detail-view");
-    allDetailViews.forEach(view => {
-      if (view.dataset.country === countryName) {
-        view.classList.add("active");
-        gsap.fromTo(view, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.6, delay: 0.8 });
-      } else {
-        view.classList.remove("active");
+      // 2. Hide scroll-snap container (during zoom)
+      if (snapContainer) {
+        tl.to(snapContainer, {
+          opacity: 0,
+          duration: 0.4,
+          onComplete: () => {
+            snapContainer.style.display = "none";
+          }
+        }, 0);
       }
-    });
 
-    // Disable scroll snap
-    document.body.style.overflow = "auto";
+      // 3. Show overlay after zoom completes
+      if (countryDetailOverlay) {
+        tl.call(() => {
+          countryDetailOverlay.style.display = "block";
+        });
+        tl.fromTo(countryDetailOverlay,
+          { opacity: 0 },
+          { opacity: 1, duration: 0.6 }
+        );
+      }
+
+      // 4. Show the specific country's detail view
+      const allDetailViews = document.querySelectorAll(".country-detail-view");
+      allDetailViews.forEach(view => {
+        if (view.dataset.country === countryName) {
+          tl.call(() => {
+            view.classList.add("active");
+          });
+          tl.fromTo(view,
+            { opacity: 0, y: 30 },
+            { opacity: 1, y: 0, duration: 0.6 },
+            "-=0.3"
+          );
+        } else {
+          view.classList.remove("active");
+        }
+      });
+
+      // 5. Disable scroll snap and lock zoom
+      tl.call(() => {
+        document.body.style.overflow = "auto";
+        // Lock the zoom in place
+        if (worldMap) {
+          gsap.set(worldMap, {
+            scale: 4,
+            transformOrigin: transformOrigin
+          });
+        }
+      });
+    }
   }
 
   function hideCountryDetail() {
-    // Zoom map back to original viewBox
+    // Zoom map back to original scale (keep current transform-origin to avoid sudden shift)
     const worldMap = document.querySelector(".world-map");
     if (worldMap) {
       gsap.to(worldMap, {
-        attr: { viewBox: "-4.1 0.4 968.2 506.2" },
+        scale: 1,
+        // Don't change transform-origin during animation to avoid sudden shift
         duration: 1.2,
-        ease: "power2.inOut"
+        ease: "power2.inOut",
+        onComplete: () => {
+          // Reset transform-origin and restore the map breathing parallax animation
+          gsap.set(worldMap, { transformOrigin: "50% 50%" });
+          mapBreathingTween = gsap.to(".world-map", {
+            scale: 1.03,
+            ease: "none",
+            scrollTrigger: { trigger: "body", start: "top top", end: "bottom bottom", scrub: 2 }
+          });
+        }
       });
     }
 
