@@ -714,8 +714,10 @@ body.page-blogs .plane-shadow { fill: var(--aged-red-deep); opacity: 0.3; }
     overflow-x: hidden;
     box-sizing: border-box;
   }
-  .atlas-dest {
+  body.page-blogs .atlas-snap .atlas-dest {
+    display: grid !important;
     grid-template-columns: 1fr !important;
+    grid-template-rows: auto auto !important;
     gap: 20px !important;
     align-content: center;
     max-width: 100%;
@@ -985,8 +987,10 @@ body.page-blogs .plane-shadow { fill: var(--aged-red-deep); opacity: 0.3; }
 }
 
 @media (max-width: 900px) {
-  .country-post-card {
+  body.page-blogs .country-detail-overlay .country-post-card {
+    display: grid !important;
     grid-template-columns: 1fr !important;
+    grid-template-rows: auto auto !important;
     gap: 20px !important;
     padding: 60px 24px;
     max-width: 100%;
