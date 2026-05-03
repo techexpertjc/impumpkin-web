@@ -725,11 +725,9 @@ body.page-blogs .plane-shadow { fill: var(--aged-red-deep); opacity: 0.3; }
     margin: 0 auto;
     padding: 0 !important;
   }
+  /* Hide text card on mobile - only show polaroid */
   .atlas-dest-content {
-    padding: 22px;
-    max-width: 100%;
-    width: 100%;
-    margin: 0 auto;
+    display: none !important;
   }
 
   /* Override GSAP initial states on mobile - ensure content is visible */
@@ -752,6 +750,12 @@ body.page-blogs .plane-shadow { fill: var(--aged-red-deep); opacity: 0.3; }
     width: min(240px, 90vw);
     padding: 10px 10px 36px;
     margin: 0 auto;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+  }
+
+  .atlas-polaroid:hover {
+    transform: scale(1.05);
   }
   .atlas-polaroid-caption { font-size: 1.1rem; }
   .atlas-stamp {

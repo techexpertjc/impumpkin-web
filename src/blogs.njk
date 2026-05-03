@@ -9,6 +9,17 @@ description: A journey across destinations — each pin a story, each story a pl
 {%- set journey = collections.journey -%}
 {%- set postsByCountry = collections.postsByCountry -%}
 
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loading-overlay">
+  <div class="loading-content">
+    <video class="loading-video" autoplay loop muted playsinline>
+      <source src="/assets/videos/loading-animation.webm" type="video/webm">
+      <source src="/assets/videos/loading-animation.mp4" type="video/mp4">
+    </video>
+    <p class="loading-text">Preparing your journey...</p>
+  </div>
+</div>
+
 <!-- Atmosphere layers -->
 <div class="atlas-grain"></div>
 <div class="atlas-vignette"></div>
@@ -141,10 +152,14 @@ description: A journey across destinations — each pin a story, each story a pl
     {%- set chapter = "Chapter " + (loop.index | romanNumeral) -%}
     {%- set firstPost = posts[0] -%}
     {%- set bounds = posts | countryBounds -%}
+    {%- set countryX = countries.getMapX(countryName) -%}
+    {%- set countryY = countries.getMapY(countryName) -%}
     <section
       class="atlas-dest"
       data-step="{{ loop.index }}"
       data-country="{{ countryName }}"
+      data-center-x="{{ countryX }}"
+      data-center-y="{{ countryY }}"
       data-bounds='{"minX":{{ bounds.minX }},"maxX":{{ bounds.maxX }},"minY":{{ bounds.minY }},"maxY":{{ bounds.maxY }},"centerX":{{ bounds.centerX }},"centerY":{{ bounds.centerY }}}'
     >
 
@@ -179,7 +194,7 @@ description: A journey across destinations — each pin a story, each story a pl
       </div>
 
       <div class="atlas-dest-photo-stage">
-        <div class="atlas-polaroid">
+        <div class="atlas-polaroid" data-country-cta="{{ countryName }}">
           {% if firstPost.data.hero %}
             <img src="{{ firstPost.data.hero }}" alt="{{ countryName }}" loading="lazy">
           {% endif %}
