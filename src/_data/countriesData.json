@@ -4,22 +4,22 @@
       "name": "India",
       "iso": "IN",
       "flag": "🇮🇳",
-      "mapX": 660,
-      "mapY": 220
+      "mapX": 686,
+      "mapY": 180
     },
     {
       "name": "Thailand",
       "iso": "TH",
       "flag": "🇹🇭",
-      "mapX": 730,
-      "mapY": 240
+      "mapX": 749,
+      "mapY": 203
     },
     {
+      "mapX": 770,
+      "mapY": 213,
       "name": "Vietnam",
       "iso": "VN",
-      "flag": "🇻🇳",
-      "mapX": 750,
-      "mapY": 230
+      "flag": "VN"
     }
   ]
 }
