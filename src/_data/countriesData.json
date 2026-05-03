@@ -13,6 +13,13 @@
       "flag": "🇹🇭",
       "mapX": 730,
       "mapY": 240
+    },
+    {
+      "mapX": 770,
+      "mapY": 213,
+      "name": "Vietnam",
+      "iso": "VN",
+      "flag": "VN"
     }
   ]
 }
