@@ -224,6 +224,25 @@ collections:
               - { label: "🫧 Rising bubbles (underwater)",   value: "bubbles" }
               - { label: "✦ Drifting plankton (underwater)", value: "particles" }
 
+  # ─── Countries (manage countries for the map) ───
+  - name: "countries"
+    label: "🗺️ Countries"
+    files:
+      - label: "Countries List"
+        name: "countriesList"
+        file: "src/_data/countriesData.json"
+        fields:
+          - label: "Countries"
+            name: "countries"
+            widget: "list"
+            summary: "{{fields.flag}} {{fields.name}} — Pin at ({{fields.mapX}}, {{fields.mapY}})"
+            fields:
+              - { label: "Country Name", name: "name", widget: "string", hint: "Full country name (e.g., 'India', 'Thailand')" }
+              - { label: "ISO Code", name: "iso", widget: "string", hint: "2-letter country code (e.g., 'IN', 'TH') for map polygon targeting" }
+              - { label: "Flag Emoji", name: "flag", widget: "string", hint: "Country flag emoji (e.g., 🇮🇳, 🇹🇭)" }
+              - { label: "Map Pin X Position", name: "mapX", widget: "number", min: 0, max: 968, default: 500, hint: "Horizontal position on the world map (0 = left edge, 968 = right edge)" }
+              - { label: "Map Pin Y Position", name: "mapY", widget: "number", min: 0, max: 506, default: 250, hint: "Vertical position on the world map (0 = top, 506 = bottom)" }
+
   # ─── Site-wide settings (editable from the CMS sidebar) ───
   - name: "settings"
     label: "⚙️ Site Settings"

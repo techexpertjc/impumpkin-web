@@ -1,0 +1,18 @@
+{
+  "countries": [
+    {
+      "name": "India",
+      "iso": "IN",
+      "flag": "🇮🇳",
+      "mapX": 660,
+      "mapY": 220
+    },
+    {
+      "name": "Thailand",
+      "iso": "TH",
+      "flag": "🇹🇭",
+      "mapX": 730,
+      "mapY": 240
+    }
+  ]
+}
