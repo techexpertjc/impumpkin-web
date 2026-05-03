@@ -4,8 +4,8 @@
       "name": "India",
       "iso": "IN",
       "flag": "🇮🇳",
-      "mapX": 660,
-      "mapY": 220
+      "mapX": 700,
+      "mapY": 120
     },
     {
       "name": "Thailand",
@@ -13,13 +13,6 @@
       "flag": "🇹🇭",
       "mapX": 730,
       "mapY": 240
-    },
-    {
-      "name": "Vietnam",
-      "iso": "VN",
-      "flag": "🇻🇳",
-      "mapX": 750,
-      "mapY": 230
     }
   ]
 }
