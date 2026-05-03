@@ -39,6 +39,10 @@ body.page-blogs main {
   padding-top: 0; /* atlas page has its own scroll system */
 }
 
+body.page-blogs .site-footer {
+  display: none; /* hide footer on blogs page */
+}
+
 /* Header re-tint for the darker parchment */
 body.page-blogs .site-header {
   background: rgba(237, 226, 196, 0.82);
