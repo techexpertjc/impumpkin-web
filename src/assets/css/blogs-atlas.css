@@ -801,33 +801,39 @@ body.page-blogs .plane-shadow { fill: var(--aged-red-deep); opacity: 0.3; }
 .country-detail-close {
   position: fixed;
   top: 24px;
-  left: 24px;
+  right: 24px;
   z-index: 101;
+  width: 44px;
+  height: 44px;
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 14px 24px;
+  justify-content: center;
+  padding: 0;
   background: var(--parchment);
   border: 2px solid var(--aged-red);
-  border-radius: 8px;
+  border-radius: 50%;
   font-family: var(--font-atlas-mono);
-  font-size: 0.9rem;
-  font-weight: 700;
+  font-size: 1.5rem;
+  font-weight: 400;
   color: var(--ink);
   cursor: pointer;
   transition: all 0.3s;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+  line-height: 1;
 }
 
 .country-detail-close:hover {
   background: var(--aged-red);
   color: var(--parchment);
-  transform: translateX(-4px);
+  transform: scale(1.1);
+}
+
+.country-detail-close span {
+  display: none;
 }
 
 .country-detail-close span:first-child {
-  font-size: 1.4rem;
+  display: block;
+  font-size: 1.5rem;
   line-height: 1;
 }
 
@@ -1027,9 +1033,10 @@ body.page-blogs .plane-shadow { fill: var(--aged-red-deep); opacity: 0.3; }
 
   .country-detail-close {
     top: 16px;
-    left: 16px;
-    padding: 12px 20px;
-    font-size: 0.85rem;
+    right: 16px;
+    width: 40px;
+    height: 40px;
+    font-size: 1.3rem;
   }
 
   /* Ensure country detail cards are fully visible on mobile */
