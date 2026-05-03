@@ -93,6 +93,61 @@ module.exports = function (eleventyConfig) {
       .slice(0, 3);
   });
 
+  // Group posts by country for the blogs page country view
+  eleventyConfig.addCollection("postsByCountry", (collectionApi) => {
+    const posts = collectionApi.getFilteredByGlob("src/posts/*.md");
+    const grouped = {};
+
+    posts.forEach((post) => {
+      const country = post.data.country || "Unknown";
+      if (!grouped[country]) {
+        grouped[country] = [];
+      }
+      grouped[country].push(post);
+    });
+
+    // Sort posts within each country by date (oldest first for journey feel)
+    Object.keys(grouped).forEach((country) => {
+      grouped[country].sort((a, b) => a.date - b.date);
+    });
+
+    return grouped;
+  });
+
+  // Calculate country centroid from its posts' mapX/mapY coordinates
+  eleventyConfig.addFilter("countryCentroid", (posts) => {
+    if (!posts || posts.length === 0) {
+      return { x: 500, y: 280 }; // Default center
+    }
+    const sumX = posts.reduce((sum, p) => sum + (p.data.mapX || 0), 0);
+    const sumY = posts.reduce((sum, p) => sum + (p.data.mapY || 0), 0);
+    return {
+      x: Math.round(sumX / posts.length),
+      y: Math.round(sumY / posts.length)
+    };
+  });
+
+  // Calculate bounding box for country posts (for zoom calculations)
+  eleventyConfig.addFilter("countryBounds", (posts) => {
+    if (!posts || posts.length === 0) {
+      return { minX: 400, maxX: 600, minY: 180, maxY: 380, centerX: 500, centerY: 280 };
+    }
+    const xs = posts.map(p => p.data.mapX || 0);
+    const ys = posts.map(p => p.data.mapY || 0);
+    const minX = Math.min(...xs);
+    const maxX = Math.max(...xs);
+    const minY = Math.min(...ys);
+    const maxY = Math.max(...ys);
+    return {
+      minX,
+      maxX,
+      minY,
+      maxY,
+      centerX: (minX + maxX) / 2,
+      centerY: (minY + maxY) / 2
+    };
+  });
+
   // ─── Shortcodes ───
   eleventyConfig.addShortcode("currentYear", () => `${new Date().getFullYear()}`);
 
