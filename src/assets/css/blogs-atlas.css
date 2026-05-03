@@ -698,13 +698,36 @@ body.page-blogs .plane-shadow { fill: var(--aged-red-deep); opacity: 0.3; }
 
 /* ─── RESPONSIVE ─── */
 @media (max-width: 900px) {
-  .atlas-snap section { padding: 60px 24px; }
+  body.page-blogs {
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+
+  .atlas-snap {
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+
+  .atlas-snap section {
+    padding: 60px 24px;
+    max-width: 100vw;
+    overflow-x: hidden;
+    box-sizing: border-box;
+  }
   .atlas-dest {
     grid-template-columns: 1fr;
     gap: 28px;
     align-content: center;
+    max-width: 100%;
+    width: 100%;
+    margin: 0 auto;
   }
-  .atlas-dest-content { padding: 22px; max-width: 100%; }
+  .atlas-dest-content {
+    padding: 22px;
+    max-width: 100%;
+    width: 100%;
+    margin: 0 auto;
+  }
 
   /* Override GSAP initial states on mobile - ensure content is visible */
   .atlas-dest-content > * {
@@ -717,11 +740,26 @@ body.page-blogs .plane-shadow { fill: var(--aged-red-deep); opacity: 0.3; }
     opacity: 1 !important;
   }
 
-  .atlas-dest-photo-stage { height: 42vh; }
-  .atlas-polaroid { width: 240px; padding: 10px 10px 36px; }
+  .atlas-dest-photo-stage {
+    height: 42vh;
+    width: 100%;
+    margin: 0 auto;
+  }
+  .atlas-polaroid {
+    width: min(240px, 90vw);
+    padding: 10px 10px 36px;
+    margin: 0 auto;
+  }
   .atlas-polaroid-caption { font-size: 1.1rem; }
-  .atlas-stamp { width: 80px; height: 80px; font-size: 0.55rem; }
-  .atlas-ticket { font-size: 8px; padding: 8px 12px; }
+  .atlas-stamp {
+    width: 80px;
+    height: 80px;
+    font-size: 0.55rem;
+  }
+  .atlas-ticket {
+    font-size: 8px;
+    padding: 8px 12px;
+  }
   .atlas-progress { left: 14px; gap: 12px; }
   .atlas-frame.tl, .atlas-frame.tr { top: 90px; }
   .atlas-frame.bl, .atlas-frame.br { bottom: 14px; }
@@ -950,20 +988,28 @@ body.page-blogs .plane-shadow { fill: var(--aged-red-deep); opacity: 0.3; }
     grid-template-columns: 1fr;
     gap: 28px;
     padding: 60px 24px;
+    max-width: 100%;
+    width: 100%;
+    margin: 0 auto;
   }
 
   .country-post-content {
     padding: 22px;
     max-width: 100%;
+    width: 100%;
+    margin: 0 auto;
   }
 
   .country-post-image-stage {
     height: 42vh;
+    width: 100%;
+    margin: 0 auto;
   }
 
   .country-post-image {
-    width: 240px;
+    width: min(240px, 90vw);
     padding: 10px 10px 36px;
+    margin: 0 auto;
   }
 
   .country-post-num {
