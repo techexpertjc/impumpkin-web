@@ -214,10 +214,10 @@ function loadScript(src) {
       const width = (bounds.maxX - bounds.minX) + padding * 2;
       const height = (bounds.maxY - bounds.minY) + padding * 2;
 
-      // Calculate zoom scale (limit to 2.5x max zoom)
+      // Calculate zoom scale (limit to 4x max zoom)
       const scaleX = 968.2 / width;
       const scaleY = 506.2 / height;
-      const scale = Math.min(scaleX, scaleY, 2.5);
+      const scale = Math.min(scaleX, scaleY, 4);
 
       // Calculate new viewBox
       const newWidth = 968.2 / scale;
