@@ -572,6 +572,16 @@ body.page-blogs .plane-shadow { fill: var(--aged-red-deep); opacity: 0.3; }
   filter: sepia(0.18) saturate(0.92) contrast(1.02);
   background: var(--parchment-2);
 }
+.coming-soon-placeholder {
+  width: 100%;
+  aspect-ratio: 4/5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--parchment-light), var(--parchment-2));
+  font-size: 6rem;
+  filter: sepia(0.18) saturate(0.92) contrast(1.02);
+}
 .atlas-polaroid-caption {
   text-align: center;
   margin-top: 12px;
@@ -848,6 +858,58 @@ body.page-blogs .plane-shadow { fill: var(--aged-red-deep); opacity: 0.3; }
   /* Scroll-snap container for blog posts */
 }
 
+.country-coming-soon {
+  min-height: 100vh;
+  width: 100%;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  scroll-margin-top: 76px;
+  padding: 120px clamp(24px, 6vw, 100px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.coming-soon-flag {
+  font-size: 8rem;
+  line-height: 1;
+  margin-bottom: 32px;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+.coming-soon-title {
+  font-family: var(--font-atlas-serif);
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 600;
+  color: var(--aged-red);
+  margin-bottom: 32px;
+  letter-spacing: -0.02em;
+}
+
+.coming-soon-text {
+  font-family: var(--font-atlas-body);
+  font-size: clamp(1.1rem, 2vw, 1.3rem);
+  line-height: 1.7;
+  color: var(--ink-soft);
+  max-width: 600px;
+  margin: 0 auto 24px;
+}
+
+.coming-soon-text:last-child {
+  margin-bottom: 0;
+  font-style: italic;
+  color: var(--ink-mute);
+}
+
 .country-post-card {
   min-height: 100vh;
   width: 100%;
@@ -1041,5 +1103,29 @@ body.page-blogs .plane-shadow { fill: var(--aged-red-deep); opacity: 0.3; }
   /* Ensure country detail cards are fully visible on mobile */
   .country-detail-view {
     opacity: 1 !important;
+  }
+
+  /* Coming soon mobile adjustments */
+  .country-coming-soon {
+    padding: 80px 24px;
+  }
+
+  .coming-soon-flag {
+    font-size: 5rem;
+    margin-bottom: 24px;
+  }
+
+  .coming-soon-title {
+    font-size: 2rem;
+    margin-bottom: 24px;
+  }
+
+  .coming-soon-text {
+    font-size: 1rem;
+    margin-bottom: 18px;
+  }
+
+  .coming-soon-placeholder {
+    font-size: 4rem;
   }
 }
