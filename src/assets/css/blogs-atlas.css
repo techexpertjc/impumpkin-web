@@ -82,6 +82,9 @@ body.page-blogs .site-footer {
   filter: sepia(0.35) saturate(0.8) brightness(1.05) drop-shadow(0 10px 30px rgba(31, 26, 20, 0.15));
   /* Remove black bars by clipping the sides */
   clip-path: inset(0 10% 0 10%);
+  /* Soft fade at edges - radial gradient mask */
+  mask-image: radial-gradient(ellipse 45% 60% at center, black 40%, transparent 90%);
+  -webkit-mask-image: radial-gradient(ellipse 45% 60% at center, black 40%, transparent 90%);
 }
 
 .loading-text {
@@ -777,11 +780,7 @@ body.page-blogs .plane-shadow { fill: var(--aged-red-deep); opacity: 0.3; }
   .atlas-roman { font-size: 3rem; }
 }
 
-/* Disable snap on very small screens */
-@media (max-width: 500px) {
-  body.page-blogs { scroll-snap-type: none; }
-  .atlas-snap section { scroll-snap-align: none; }
-}
+/* Snap scroll enabled on all screen sizes including mobile */
 
 /* ═══════════════════════════════════════════════════════════
    COUNTRY DETAIL OVERLAY
