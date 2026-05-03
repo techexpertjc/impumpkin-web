@@ -53,8 +53,7 @@ function loadScript(src) {
   const sections = gsap.utils.toArray(".atlas-dest");
 
   sections.forEach((section) => {
-    const pinIdx   = parseInt(section.dataset.pin, 10);
-    const routeId  = section.dataset.route; // e.g., "route-1" or empty for the first stop
+    const countryName = section.dataset.country;
     const content  = section.querySelector(".atlas-dest-content");
     const photoStage = section.querySelector(".atlas-dest-photo-stage");
     const polaroid = photoStage?.querySelector(".atlas-polaroid");
@@ -77,45 +76,20 @@ function loadScript(src) {
       played = true;
       const tl = gsap.timeline();
 
-      // 1. Draw route segment (if any) + plane fly along it
-      if (routeId) {
-        const routePath = document.getElementById(routeId);
-        const glowPath  = document.getElementById(routeId.replace("route", "glow"));
-
-        if (routePath) {
-          tl.to(routePath, { strokeDashoffset: 0, duration: 1.6, ease: "power2.inOut" }, 0);
+      // 1. Drop all pins for this country
+      const countryPins = document.querySelectorAll(`.pin-group[data-country="${countryName}"]`);
+      countryPins.forEach((pin, idx) => {
+        if (!pin.classList.contains("visible")) {
+          pin.classList.add("visible");
+          tl.fromTo(pin,
+            { opacity: 0, scale: 0, transformOrigin: "center" },
+            { opacity: 1, scale: 1, duration: 0.8, ease: "back.out(2.4)" },
+            idx * 0.15 // Stagger pins slightly
+          );
         }
-        if (glowPath) {
-          tl.to(glowPath, { strokeDashoffset: 0, duration: 1.6, ease: "power2.inOut" }, 0);
-        }
-        if (routePath) {
-          tl.set("#plane", { opacity: 1 }, 0);
-          tl.to("#plane", {
-            motionPath: {
-              path: `#${routeId}`,
-              align: `#${routeId}`,
-              autoRotate: true,
-              alignOrigin: [0.5, 0.5]
-            },
-            duration: 1.6,
-            ease: "power2.inOut"
-          }, 0);
-          tl.to("#plane", { opacity: 0, duration: 0.4, ease: "power2.out" }, 1.4);
-        }
-      }
+      });
 
-      // 2. Drop the destination pin
-      const pin = document.querySelector(`.pin-group[data-pin="${pinIdx}"]`);
-      if (pin && !pin.classList.contains("visible")) {
-        pin.classList.add("visible");
-        tl.fromTo(pin,
-          { opacity: 0, scale: 0, transformOrigin: "center" },
-          { opacity: 1, scale: 1, duration: 0.8, ease: "back.out(2.4)" },
-          routeId ? 1.2 : 0.2
-        );
-      }
-
-      // 3. Reveal dest-content (text card)
+      // 2. Reveal dest-content (text card)
       if (contentChildren.length) {
         tl.to(contentChildren, {
           opacity: 1,
@@ -123,10 +97,10 @@ function loadScript(src) {
           duration: 0.9,
           stagger: 0.08,
           ease: "power3.out"
-        }, routeId ? 0.4 : 0.2);
+        }, 0.2);
       }
 
-      // 4. Polaroid entry
+      // 3. Polaroid entry
       if (polaroid) {
         tl.fromTo(polaroid,
           { opacity: 0, y: 50, rotation: -8, scale: 0.92 },
@@ -135,7 +109,7 @@ function loadScript(src) {
         );
       }
 
-      // 5. Stamp + ticket
+      // 4. Stamp + ticket
       if (stamp) {
         tl.fromTo(stamp,
           { opacity: 0, scale: 1.6 },
@@ -209,4 +183,117 @@ function loadScript(src) {
   });
 
   window.addEventListener("load", () => ScrollTrigger.refresh());
+
+  // ─── Country Detail Zoom ───
+  const countryDetailOverlay = document.getElementById("country-detail-overlay");
+  const countryDetailClose = document.getElementById("country-detail-close");
+  const snapContainer = document.querySelector(".atlas-snap");
+  const countryCtaButtons = document.querySelectorAll("[data-country-cta]");
+
+  countryCtaButtons.forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      const countryName = btn.dataset.countryCta;
+      showCountryDetail(countryName);
+    });
+  });
+
+  if (countryDetailClose) {
+    countryDetailClose.addEventListener("click", hideCountryDetail);
+  }
+
+  function showCountryDetail(countryName) {
+    // Find the country section to get its bounds
+    const countrySection = document.querySelector(`.atlas-dest[data-country="${countryName}"]`);
+
+    if (countrySection && countrySection.dataset.bounds) {
+      const bounds = JSON.parse(countrySection.dataset.bounds);
+
+      // Add padding
+      const padding = 100;
+      const width = (bounds.maxX - bounds.minX) + padding * 2;
+      const height = (bounds.maxY - bounds.minY) + padding * 2;
+
+      // Calculate zoom scale (limit to 2.5x max zoom)
+      const scaleX = 968.2 / width;
+      const scaleY = 506.2 / height;
+      const scale = Math.min(scaleX, scaleY, 2.5);
+
+      // Calculate new viewBox
+      const newWidth = 968.2 / scale;
+      const newHeight = 506.2 / scale;
+      const newX = bounds.centerX - newWidth / 2;
+      const newY = bounds.centerY - newHeight / 2;
+
+      // Zoom the map
+      const worldMap = document.querySelector(".world-map");
+      if (worldMap) {
+        gsap.to(worldMap, {
+          attr: { viewBox: `${newX} ${newY} ${newWidth} ${newHeight}` },
+          duration: 1.2,
+          ease: "power2.inOut"
+        });
+      }
+    }
+
+    // Hide scroll-snap container
+    if (snapContainer) {
+      gsap.to(snapContainer, { opacity: 0, duration: 0.4, onComplete: () => {
+        snapContainer.style.display = "none";
+      }});
+    }
+
+    // Show overlay and detail view
+    if (countryDetailOverlay) {
+      countryDetailOverlay.style.display = "block";
+      gsap.fromTo(countryDetailOverlay, { opacity: 0 }, { opacity: 1, duration: 0.8, delay: 0.4 });
+    }
+
+    // Show the specific country's detail view
+    const allDetailViews = document.querySelectorAll(".country-detail-view");
+    allDetailViews.forEach(view => {
+      if (view.dataset.country === countryName) {
+        view.classList.add("active");
+        gsap.fromTo(view, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.6, delay: 0.8 });
+      } else {
+        view.classList.remove("active");
+      }
+    });
+
+    // Disable scroll snap
+    document.body.style.overflow = "auto";
+  }
+
+  function hideCountryDetail() {
+    // Zoom map back to original viewBox
+    const worldMap = document.querySelector(".world-map");
+    if (worldMap) {
+      gsap.to(worldMap, {
+        attr: { viewBox: "-4.1 0.4 968.2 506.2" },
+        duration: 1.2,
+        ease: "power2.inOut"
+      });
+    }
+
+    // Hide overlay
+    if (countryDetailOverlay) {
+      gsap.to(countryDetailOverlay, { opacity: 0, duration: 0.4, onComplete: () => {
+        countryDetailOverlay.style.display = "none";
+      }});
+    }
+
+    // Show scroll-snap container
+    if (snapContainer) {
+      snapContainer.style.display = "block";
+      gsap.to(snapContainer, { opacity: 1, duration: 0.6, delay: 0.4 });
+    }
+
+    // Re-enable scroll snap
+    document.body.style.overflow = "";
+
+    // Hide all detail views
+    const allDetailViews = document.querySelectorAll(".country-detail-view");
+    allDetailViews.forEach(view => view.classList.remove("active"));
+  }
+
 })();

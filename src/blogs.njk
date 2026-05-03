@@ -7,6 +7,7 @@ description: A journey across destinations — each pin a story, each story a pl
 ---
 {%- set t = translations[locale or 'en'] -%}
 {%- set journey = collections.journey -%}
+{%- set postsByCountry = collections.postsByCountry -%}
 
 <!-- Atmosphere layers -->
 <div class="atlas-grain"></div>
@@ -18,13 +19,14 @@ description: A journey across destinations — each pin a story, each story a pl
 <div class="atlas-frame bl">Lat. unknown · Long. somewhere</div>
 <div class="atlas-frame br"><span class="page-num" id="atlas-page-num">— i —</span></div>
 
-<!-- Progress dots (one per snap section: intro + N destinations + outro) -->
+<!-- Progress dots (one per snap section: intro + N countries + outro) -->
 <div class="atlas-progress" id="atlas-progress">
   <div class="atlas-progress-dot" data-step="0"></div>
-  {%- for post in journey -%}
+  {%- for countryName, posts in collections.postsByCountry -%}
   <div class="atlas-progress-dot" data-step="{{ loop.index }}"></div>
   {%- endfor -%}
-  <div class="atlas-progress-dot" data-step="{{ journey.length + 1 }}"></div>
+  {%- set countryCount = collections.postsByCountry | length -%}
+  <div class="atlas-progress-dot" data-step="{{ (collections.postsByCountry | length) + 1 }}"></div>
 </div>
 
 <!-- World map (fixed background) -->
@@ -101,15 +103,15 @@ description: A journey across destinations — each pin a story, each story a pl
       <path class="plane-body" d="M 0,0 L -10,-5 L -10,-1 L -3,-1 L -3,6 L -6,7 L -6,9 L 1,8 L 8,9 L 8,7 L 5,6 L 5,-1 L 12,-1 L 12,-5 Z"/>
     </g>
 
-    <!-- Pins (one per destination) -->
+    <!-- Pins (one per country) -->
     <g class="pins">
-      {%- for post in journey -%}
-      <g class="pin-group" data-pin="{{ loop.index0 }}" transform="translate({{ post.data.mapX }},{{ post.data.mapY }})">
+      {%- for countryName, posts in collections.postsByCountry -%}
+      <g class="pin-group" data-country="{{ countryName }}" transform="translate({{ countries.getMapX(countryName) }},{{ countries.getMapY(countryName) }})">
         <circle class="pin-ring" r="14"/>
         <circle class="pin-ring pin-ring-2" r="9"/>
         <circle class="pin-dot" r="5"/>
         <text class="pin-roman" text-anchor="middle" y="2">{{ loop.index | romanNumeral }}</text>
-        <text class="pin-label" y="-22" text-anchor="middle">{{ post.data.destination }}</text>
+        <text class="pin-label" y="-22" text-anchor="middle">{{ countryName }}</text>
       </g>
       {%- endfor -%}
     </g>
@@ -123,97 +125,99 @@ description: A journey across destinations — each pin a story, each story a pl
   <section class="atlas-intro" data-step="0">
     <div class="atlas-intro-eyebrow">A Travel Journal</div>
     <h1 class="atlas-intro-title">Where I<br>Wander<span class="amp">&amp;</span><em>Wonder</em></h1>
-    <p class="atlas-intro-sub">{{ journey.length }} {% if journey.length == 1 %}place{% else %}places{% endif %}, a stubborn habit of writing it all down.</p>
+    {%- set totalCountries = 0 -%}
+    {%- for countryName, posts in postsByCountry -%}
+      {%- set totalCountries = loop.length -%}
+    {%- endfor -%}
+    <p class="atlas-intro-sub">{{ totalCountries }} {% if totalCountries == 1 %}country{% else %}countries{% endif %}, {{ journey.length }} {% if journey.length == 1 %}destination{% else %}destinations{% endif %}, countless memories.</p>
     <div class="atlas-intro-byline">— from Pumpkin, with love</div>
     <div class="atlas-intro-scroll">scroll to begin</div>
   </section>
 
-  <!-- DESTINATIONS (one per post, chronological — oldest first) -->
-  {%- for post in journey -%}
-  {%- set chapter = "Chapter " + (loop.index | romanNumeral) -%}
-  <section
-    class="atlas-dest"
-    data-step="{{ loop.index }}"
-    data-pin="{{ loop.index0 }}"
-    data-route="{% if not loop.first %}route-{{ loop.index0 }}{% endif %}"
-  >
+  <!-- COUNTRIES (one section per country) -->
+  {%- set countryIndex = 0 -%}
+  {%- for countryName, posts in collections.postsByCountry -%}
+    {%- set countryIndex = loop.index -%}
+    {%- set chapter = "Chapter " + (loop.index | romanNumeral) -%}
+    {%- set firstPost = posts[0] -%}
+    {%- set bounds = posts | countryBounds -%}
+    <section
+      class="atlas-dest"
+      data-step="{{ loop.index }}"
+      data-country="{{ countryName }}"
+      data-bounds='{"minX":{{ bounds.minX }},"maxX":{{ bounds.maxX }},"minY":{{ bounds.minY }},"maxY":{{ bounds.maxY }},"centerX":{{ bounds.centerX }},"centerY":{{ bounds.centerY }}}'
+    >
 
-    <div class="atlas-dest-content">
-      <div class="atlas-dest-numeral">
-        <span class="atlas-roman">{{ loop.index | romanNumeral }}.</span>
-        <span class="atlas-chapter">{{ chapter }} · {{ post.date | monthYear }}</span>
+      <div class="atlas-dest-content">
+        <div class="atlas-dest-numeral">
+          <span class="atlas-roman">{{ loop.index | romanNumeral }}.</span>
+          <span class="atlas-chapter">{{ chapter }} · {{ countries.getFlag(countryName) }} {{ countryName }}</span>
+        </div>
+
+        <h2 class="atlas-dest-title">
+          {{ countryName }}
+        </h2>
+        <p class="atlas-dest-region">{{ posts.length }} {% if posts.length == 1 %}destination{% else %}destinations{% endif %} explored</p>
+
+        <div class="atlas-ornament">
+          <div class="atlas-ornament-line"></div>
+          <span class="atlas-ornament-mark">❦</span>
+          <div class="atlas-ornament-line"></div>
+        </div>
+
+        <p class="atlas-dest-text">
+          A collection of {{ posts.length }} journeys across {{ countryName }}, from {{ posts[0].date | monthYear }} to {{ posts[posts.length - 1].date | monthYear }}.
+        </p>
+
+        <div class="atlas-dest-tags">
+          {%- for post in posts | limit(3) -%}
+            <span>{{ post.data.destination }}</span>
+          {%- endfor -%}
+        </div>
+
+        <button class="atlas-dest-cta" data-country-cta="{{ countryName }}">Explore {{ posts.length }} stories →</button>
       </div>
 
-      {%- set words = post.data.destination.split(' ') -%}
-      <h2 class="atlas-dest-title">
-        {%- if words.length > 1 -%}
-          {{ words[0] }}<span class="accent"> {{ words.slice(1).join(' ') }}</span>
-        {%- else -%}
-          {{ post.data.destination }}
-        {%- endif -%}
-      </h2>
-      <p class="atlas-dest-region">{{ post.data.country }}</p>
-      {% if post.data.coords %}
-      <p class="atlas-dest-coords">{{ post.data.coords }}</p>
-      {% endif %}
+      <div class="atlas-dest-photo-stage">
+        <div class="atlas-polaroid">
+          {% if firstPost.data.hero %}
+            <img src="{{ firstPost.data.hero }}" alt="{{ countryName }}" loading="lazy">
+          {% endif %}
+          <div class="atlas-polaroid-caption">{{ countryName | lower }}, {{ posts.length }} journeys</div>
+        </div>
 
-      <div class="atlas-ornament">
-        <div class="atlas-ornament-line"></div>
-        <span class="atlas-ornament-mark">❦</span>
-        <div class="atlas-ornament-line"></div>
+        <div class="atlas-stamp pos-{{ loop.index0 % 4 }}">
+          Explored<br>{{ posts.length }}x
+        </div>
+
+        <div class="atlas-ticket pos-{{ (loop.index0 + 1) % 4 }}">
+          Country Pass<br>
+          <b>{{ countryName | upper }}</b><br>
+          Region N° {{ loop.index | romanNumeral }}
+        </div>
       </div>
 
-      <p class="atlas-dest-text">{{ post.data.excerpt }}</p>
-
-      {% if post.data.tags and post.data.tags.length %}
-      <div class="atlas-dest-tags">
-        {%- for tag in post.data.tags | limit(3) -%}
-          <span>{{ tag }}</span>
-        {%- endfor -%}
-      </div>
-      {% endif %}
-
-      <a href="{{ post.url }}" class="atlas-dest-cta">Read the full story →</a>
-    </div>
-
-    <div class="atlas-dest-photo-stage">
-      <a href="{{ post.url }}" class="atlas-polaroid" aria-label="{{ post.data.title }}">
-        {% if post.data.hero %}
-          <img src="{{ post.data.hero }}" alt="{{ post.data.title }}" loading="lazy">
-        {% else %}
-          <img src="/assets/images/destinations/{{ post.fileSlug }}/hero.jpg" alt="{{ post.data.title }}" loading="lazy">
-        {% endif %}
-        <div class="atlas-polaroid-caption">{{ post.data.destination | lower }}, {{ post.date | monthYear | lower }}</div>
-      </a>
-
-      <div class="atlas-stamp pos-{{ loop.index0 % 4 }}">
-        Visited<br>{{ post.date | monthYear }}
-      </div>
-
-      <div class="atlas-ticket pos-{{ (loop.index0 + 1) % 4 }}">
-        Boarding Pass<br>
-        <b>{{ post.data.country | upper }}</b><br>
-        Stop N° {{ loop.index | romanNumeral }}
-      </div>
-    </div>
-
-  </section>
+    </section>
   {%- endfor -%}
 
   <!-- OUTRO -->
-  <section class="atlas-outro" data-step="{{ journey.length + 1 }}">
+  {%- set totalCountries = 0 -%}
+  {%- for countryName, posts in postsByCountry -%}
+    {%- set totalCountries = loop.length -%}
+  {%- endfor -%}
+  <section class="atlas-outro" data-step="{{ totalCountries + 1 }}">
     <div class="atlas-outro-stat">— end of the volume so far —</div>
     <h2 class="atlas-outro-title">
       Of all the places I've been, <span class="accent">the next one</span> is my favorite.
     </h2>
     <div class="atlas-outro-stats">
       <div class="atlas-outro-stat-block">
-        <div class="num">{{ journey.length }}</div>
-        <div class="label">{% if journey.length == 1 %}place{% else %}places{% endif %}</div>
+        <div class="num">{{ totalCountries }}</div>
+        <div class="label">{% if totalCountries == 1 %}country{% else %}countries{% endif %}</div>
       </div>
       <div class="atlas-outro-stat-block">
-        <div class="num">{{ journey | featured | length }}</div>
-        <div class="label">featured</div>
+        <div class="num">{{ journey.length }}</div>
+        <div class="label">{% if journey.length == 1 %}destination{% else %}destinations{% endif %}</div>
       </div>
       <div class="atlas-outro-stat-block">
         <div class="num">∞</div>
@@ -223,6 +227,55 @@ description: A journey across destinations — each pin a story, each story a pl
     <div class="atlas-outro-sign">— to be continued —</div>
   </section>
 
+
+</div>
+
+<!-- ════════ COUNTRY DETAIL VIEW (hidden initially) ════════ -->
+<div class="country-detail-overlay" id="country-detail-overlay">
+  <button class="country-detail-close" id="country-detail-close" aria-label="Back to countries">
+    <span>←</span>
+    <span>Back to Countries</span>
+  </button>
+
+  {%- for countryName, posts in collections.postsByCountry -%}
+  <div class="country-detail-view" data-country="{{ countryName }}">
+    <header class="country-detail-header">
+      <h2 class="country-detail-title">{{ countries.getFlag(countryName) }} {{ countryName }}</h2>
+      <p class="country-detail-subtitle">{{ posts.length }} {% if posts.length == 1 %}destination{% else %}destinations{% endif %} explored</p>
+    </header>
+
+    <div class="country-detail-posts">
+      {%- for post in posts -%}
+      <article class="country-post-card">
+        <a href="{{ post.url }}" class="country-post-link">
+          <div class="country-post-image">
+            {% if post.data.hero %}
+              <img src="{{ post.data.hero }}" alt="{{ post.data.title }}" loading="lazy">
+            {% endif %}
+          </div>
+          <div class="country-post-content">
+            <div class="country-post-meta">
+              <span class="country-post-num">{{ loop.index | romanNumeral }}</span>
+              <span class="country-post-date">{{ post.date | monthYear }}</span>
+            </div>
+            <h3 class="country-post-title">{{ post.data.destination }}</h3>
+            {% if post.data.excerpt %}
+              <p class="country-post-excerpt">{{ post.data.excerpt }}</p>
+            {% endif %}
+            {% if post.data.tags and post.data.tags.length %}
+              <div class="country-post-tags">
+                {%- for tag in post.data.tags | limit(3) -%}
+                  <span>{{ tag }}</span>
+                {%- endfor -%}
+              </div>
+            {% endif %}
+          </div>
+        </a>
+      </article>
+      {%- endfor -%}
+    </div>
+  </div>
+  {%- endfor -%}
 </div>
 
 {% block extraCss %}

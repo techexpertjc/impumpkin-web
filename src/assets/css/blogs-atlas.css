@@ -4,6 +4,13 @@
    Adapted from the original travel-demo.html aesthetic.
    ============================================================ */
 
+/* Scroll snap on html element (same pattern as home page) */
+html:has(.page-blogs) {
+  scroll-behavior: auto;
+  scroll-snap-type: y mandatory;
+  scroll-padding-top: 76px;
+}
+
 body.page-blogs {
   /* Override site palette with vintage atlas tones */
   --parchment: #ede2c4;
@@ -26,7 +33,6 @@ body.page-blogs {
   background: var(--parchment);
   font-family: var(--font-atlas-body);
   color: var(--ink);
-  scroll-snap-type: y mandatory;
 }
 
 body.page-blogs main {
@@ -314,6 +320,9 @@ body.page-blogs .plane-shadow { fill: var(--aged-red-deep); opacity: 0.3; }
   grid-template-columns: 1.05fr 0.95fr;
   gap: 60px;
   align-items: center;
+  justify-content: center;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
 .atlas-dest-content {
@@ -650,8 +659,214 @@ body.page-blogs .plane-shadow { fill: var(--aged-red-deep); opacity: 0.3; }
   .atlas-roman { font-size: 3rem; }
 }
 
-/* Disable snap on small screens — feels too rigid on mobile */
-@media (max-width: 700px) {
+/* Disable snap on very small screens */
+@media (max-width: 500px) {
   body.page-blogs { scroll-snap-type: none; }
   .atlas-snap section { scroll-snap-align: none; }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   COUNTRY DETAIL OVERLAY
+   ══════════════════════════════════════════════════════════ */
+
+.country-detail-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(31, 26, 20, 0.92);
+  backdrop-filter: blur(12px);
+  overflow-y: auto;
+  padding: 120px 24px 80px;
+}
+
+.country-detail-close {
+  position: fixed;
+  top: 24px;
+  left: 24px;
+  z-index: 101;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 24px;
+  background: var(--parchment);
+  border: 2px solid var(--aged-red);
+  border-radius: 8px;
+  font-family: var(--font-atlas-mono);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--ink);
+  cursor: pointer;
+  transition: all 0.3s;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.country-detail-close:hover {
+  background: var(--aged-red);
+  color: var(--parchment);
+  transform: translateX(-4px);
+}
+
+.country-detail-close span:first-child {
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.country-detail-view {
+  display: none;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.country-detail-view.active {
+  display: block;
+}
+
+.country-detail-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.country-detail-title {
+  font-family: var(--font-atlas-serif);
+  font-weight: 700;
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  color: var(--parchment);
+  margin-bottom: 12px;
+  letter-spacing: -0.02em;
+}
+
+.country-detail-subtitle {
+  font-family: var(--font-atlas-mono);
+  font-size: 1rem;
+  color: #a89574;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.country-detail-posts {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 32px;
+}
+
+.country-post-card {
+  background: linear-gradient(135deg, var(--parchment-2), var(--parchment));
+  border: 2px solid rgba(176, 72, 48, 0.3);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.country-post-card:hover {
+  transform: translateY(-8px);
+  border-color: var(--aged-red);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+}
+
+.country-post-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.country-post-image {
+  aspect-ratio: 16/9;
+  overflow: hidden;
+  background: var(--sepia);
+}
+
+.country-post-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s;
+}
+
+.country-post-card:hover .country-post-image img {
+  transform: scale(1.05);
+}
+
+.country-post-content {
+  padding: 24px;
+}
+
+.country-post-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  font-family: var(--font-atlas-mono);
+  font-size: 0.85rem;
+  color: var(--sepia);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.country-post-num {
+  font-weight: 700;
+  color: var(--aged-red);
+}
+
+.country-post-title {
+  font-family: var(--font-atlas-serif);
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: var(--ink);
+  margin-bottom: 12px;
+  line-height: 1.3;
+}
+
+.country-post-excerpt {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  margin-bottom: 16px;
+}
+
+.country-post-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.country-post-tags span {
+  font-family: var(--font-atlas-hand);
+  font-size: 0.9rem;
+  color: var(--sepia);
+  background: rgba(176, 72, 48, 0.08);
+  padding: 4px 12px;
+  border-radius: 12px;
+}
+
+@media (max-width: 900px) {
+  .country-detail-posts {
+    grid-template-columns: 1fr;
+  }
+
+  .country-detail-close {
+    top: 16px;
+    left: 16px;
+    padding: 12px 20px;
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 700px) {
+  .country-detail-overlay {
+    padding: 100px 16px 60px;
+  }
+
+  .country-detail-header {
+    margin-bottom: 40px;
+  }
+
+  .country-detail-posts {
+    gap: 24px;
+  }
+
+  .country-post-content {
+    padding: 20px;
+  }
 }
