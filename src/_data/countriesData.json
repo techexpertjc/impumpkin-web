@@ -15,11 +15,11 @@
       "mapY": 203
     },
     {
-      "mapX": 770,
-      "mapY": 213,
       "name": "Vietnam",
       "iso": "VN",
-      "flag": "VN"
+      "flag": "🇻🇳",
+      "mapX": 770,
+      "mapY": 213
     }
   ]
 }
