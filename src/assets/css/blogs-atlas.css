@@ -43,6 +43,62 @@ body.page-blogs .site-footer {
   display: none; /* hide footer on blogs page */
 }
 
+/* ─── LOADING OVERLAY ─── */
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: var(--parchment);
+  display: grid;
+  place-items: center;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.8s ease-out, visibility 0.8s ease-out;
+}
+
+.loading-overlay.loaded {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.loading-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+  max-width: 90vw;
+}
+
+.loading-video {
+  max-width: min(500px, 80vw);
+  max-height: min(500px, 60vh);
+  width: auto;
+  height: auto;
+  display: block;
+  /* Blend white background with parchment */
+  mix-blend-mode: multiply;
+  /* Add warm sepia tone to match parchment aesthetic */
+  filter: sepia(0.35) saturate(0.8) brightness(1.05) drop-shadow(0 10px 30px rgba(31, 26, 20, 0.15));
+  /* Remove black bars by clipping the sides */
+  clip-path: inset(0 10% 0 10%);
+}
+
+.loading-text {
+  font-family: var(--font-atlas-serif);
+  font-style: italic;
+  font-size: clamp(1.2rem, 3vw, 1.8rem);
+  color: var(--ink-soft);
+  letter-spacing: 0.05em;
+  text-align: center;
+  animation: loadingPulse 2s ease-in-out infinite;
+}
+
+@keyframes loadingPulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
 /* Header re-tint for the darker parchment */
 body.page-blogs .site-header {
   background: rgba(237, 226, 196, 0.82);
@@ -124,6 +180,7 @@ body.page-blogs .atlas-vignette {
   pointer-events: none;
   display: grid;
   place-items: center;
+  overflow: hidden;
 }
 .atlas-map-stage .world-map {
   width: 100vw;
@@ -648,6 +705,18 @@ body.page-blogs .plane-shadow { fill: var(--aged-red-deep); opacity: 0.3; }
     align-content: center;
   }
   .atlas-dest-content { padding: 22px; max-width: 100%; }
+
+  /* Override GSAP initial states on mobile - ensure content is visible */
+  .atlas-dest-content > * {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+  }
+  .atlas-dest-photo-stage .atlas-polaroid,
+  .atlas-dest-photo-stage .atlas-stamp,
+  .atlas-dest-photo-stage .atlas-ticket {
+    opacity: 1 !important;
+  }
+
   .atlas-dest-photo-stage { height: 42vh; }
   .atlas-polaroid { width: 240px; padding: 10px 10px 36px; }
   .atlas-polaroid-caption { font-size: 1.1rem; }
@@ -906,5 +975,10 @@ body.page-blogs .plane-shadow { fill: var(--aged-red-deep); opacity: 0.3; }
     left: 16px;
     padding: 12px 20px;
     font-size: 0.85rem;
+  }
+
+  /* Ensure country detail cards are fully visible on mobile */
+  .country-detail-view {
+    opacity: 1 !important;
   }
 }
