@@ -239,23 +239,13 @@ description: A journey across destinations — each pin a story, each story a pl
 
   {%- for countryName, posts in collections.postsByCountry -%}
   <div class="country-detail-view" data-country="{{ countryName }}">
-    <header class="country-detail-header">
-      <h2 class="country-detail-title">{{ countries.getFlag(countryName) }} {{ countryName }}</h2>
-      <p class="country-detail-subtitle">{{ posts.length }} {% if posts.length == 1 %}destination{% else %}destinations{% endif %} explored</p>
-    </header>
-
     <div class="country-detail-posts">
       {%- for post in posts -%}
       <article class="country-post-card">
         <a href="{{ post.url }}" class="country-post-link">
-          <div class="country-post-image">
-            {% if post.data.hero %}
-              <img src="{{ post.data.hero }}" alt="{{ post.data.title }}" loading="lazy">
-            {% endif %}
-          </div>
           <div class="country-post-content">
             <div class="country-post-meta">
-              <span class="country-post-num">{{ loop.index | romanNumeral }}</span>
+              <span class="country-post-num">{{ loop.index | romanNumeral }}.</span>
               <span class="country-post-date">{{ post.date | monthYear }}</span>
             </div>
             <h3 class="country-post-title">{{ post.data.destination }}</h3>
@@ -269,6 +259,14 @@ description: A journey across destinations — each pin a story, each story a pl
                 {%- endfor -%}
               </div>
             {% endif %}
+          </div>
+
+          <div class="country-post-image-stage">
+            <div class="country-post-image">
+              {% if post.data.hero %}
+                <img src="{{ post.data.hero }}" alt="{{ post.data.title }}" loading="lazy">
+              {% endif %}
+            </div>
           </div>
         </a>
       </article>

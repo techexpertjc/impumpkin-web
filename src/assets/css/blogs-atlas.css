@@ -674,10 +674,10 @@ body.page-blogs .plane-shadow { fill: var(--aged-red-deep); opacity: 0.3; }
   position: fixed;
   inset: 0;
   z-index: 100;
-  background: rgba(31, 26, 20, 0.92);
-  backdrop-filter: blur(12px);
+  background: transparent;
   overflow-y: auto;
-  padding: 120px 24px 80px;
+  scroll-snap-type: y mandatory;
+  scroll-padding-top: 76px;
 }
 
 .country-detail-close {
@@ -715,134 +715,186 @@ body.page-blogs .plane-shadow { fill: var(--aged-red-deep); opacity: 0.3; }
 
 .country-detail-view {
   display: none;
-  max-width: 1200px;
-  margin: 0 auto;
 }
 
 .country-detail-view.active {
   display: block;
 }
 
-.country-detail-header {
-  text-align: center;
-  margin-bottom: 60px;
-}
-
-.country-detail-title {
-  font-family: var(--font-atlas-serif);
-  font-weight: 700;
-  font-size: clamp(2.5rem, 6vw, 4rem);
-  color: var(--parchment);
-  margin-bottom: 12px;
-  letter-spacing: -0.02em;
-}
-
-.country-detail-subtitle {
-  font-family: var(--font-atlas-mono);
-  font-size: 1rem;
-  color: #a89574;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-}
-
 .country-detail-posts {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-  gap: 32px;
+  /* Scroll-snap container for blog posts */
 }
 
 .country-post-card {
-  background: linear-gradient(135deg, var(--parchment-2), var(--parchment));
-  border: 2px solid rgba(176, 72, 48, 0.3);
-  border-radius: 16px;
-  overflow: hidden;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.country-post-card:hover {
-  transform: translateY(-8px);
-  border-color: var(--aged-red);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+  min-height: 100vh;
+  width: 100%;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  scroll-margin-top: 76px;
+  padding: 80px clamp(24px, 6vw, 100px);
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 60px;
+  align-items: center;
+  justify-content: center;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
 .country-post-link {
-  display: block;
-  text-decoration: none;
-  color: inherit;
-}
-
-.country-post-image {
-  aspect-ratio: 16/9;
-  overflow: hidden;
-  background: var(--sepia);
-}
-
-.country-post-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.4s;
-}
-
-.country-post-card:hover .country-post-image img {
-  transform: scale(1.05);
+  display: contents;
 }
 
 .country-post-content {
-  padding: 24px;
+  max-width: 520px;
+  padding: 32px;
+  background: linear-gradient(135deg, rgba(244, 235, 210, 0.92), rgba(237, 226, 196, 0.85));
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  border: 1px solid rgba(74, 63, 42, 0.15);
+  box-shadow:
+    0 20px 50px -20px rgba(31, 26, 20, 0.25),
+    inset 0 0 0 1px rgba(244, 235, 210, 0.4);
+  position: relative;
+}
+
+.country-post-content::before {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  border: 1px solid rgba(139, 111, 71, 0.2);
+  pointer-events: none;
 }
 
 .country-post-meta {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-  font-family: var(--font-atlas-mono);
-  font-size: 0.85rem;
-  color: var(--sepia);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+  align-items: baseline;
+  gap: 16px;
+  margin-bottom: 12px;
 }
 
 .country-post-num {
-  font-weight: 700;
+  font-family: var(--font-atlas-serif);
+  font-style: italic;
+  font-weight: 300;
+  font-size: 4rem;
   color: var(--aged-red);
+  line-height: 1;
+  font-variation-settings: 'opsz' 144;
+}
+
+.country-post-date {
+  font-family: var(--font-atlas-mono);
+  font-size: 10px;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
 }
 
 .country-post-title {
   font-family: var(--font-atlas-serif);
-  font-weight: 700;
-  font-size: 1.5rem;
+  font-weight: 400;
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  line-height: 1.1;
+  letter-spacing: -0.025em;
   color: var(--ink);
-  margin-bottom: 12px;
-  line-height: 1.3;
+  margin: 8px 0 12px;
+  font-variation-settings: 'opsz' 144, 'SOFT' 60;
 }
 
 .country-post-excerpt {
-  font-size: 0.95rem;
-  line-height: 1.6;
+  font-size: 1.05rem;
+  line-height: 1.7;
   color: var(--ink-soft);
-  margin-bottom: 16px;
+  margin-bottom: 24px;
 }
 
 .country-post-tags {
   display: flex;
+  gap: 18px;
   flex-wrap: wrap;
-  gap: 8px;
+  font-family: var(--font-atlas-hand);
+  font-size: 1.25rem;
+  color: var(--ink-soft);
 }
 
 .country-post-tags span {
-  font-family: var(--font-atlas-hand);
-  font-size: 0.9rem;
-  color: var(--sepia);
-  background: rgba(176, 72, 48, 0.08);
-  padding: 4px 12px;
-  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.country-post-tags span::before {
+  content: '✶';
+  color: var(--aged-red);
+  font-size: 0.8em;
+}
+
+.country-post-image-stage {
+  position: relative;
+  height: 70vh;
+  display: grid;
+  place-items: center;
+}
+
+.country-post-image {
+  background: #faf2dc;
+  padding: 14px 14px 50px;
+  box-shadow:
+    0 30px 60px -20px rgba(31, 26, 20, 0.45),
+    0 10px 25px -10px rgba(31, 26, 20, 0.3),
+    inset 0 0 0 1px rgba(74, 63, 42, 0.08);
+  transform: rotate(-3deg);
+  position: relative;
+  width: 360px;
+  max-width: 80%;
+}
+
+.country-post-image::before {
+  content: '';
+  position: absolute;
+  top: -18px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-2deg);
+  width: 90px;
+  height: 26px;
+  background: linear-gradient(to bottom, rgba(176, 72, 48, 0.45), rgba(176, 72, 48, 0.6));
+  box-shadow: 0 2px 6px rgba(31, 26, 20, 0.2);
+  opacity: 0.7;
+}
+
+.country-post-image img {
+  width: 100%;
+  aspect-ratio: 4/5;
+  object-fit: cover;
+  display: block;
+  filter: sepia(0.18) saturate(0.92) contrast(1.02);
+  background: var(--parchment-2);
 }
 
 @media (max-width: 900px) {
-  .country-detail-posts {
+  .country-post-card {
     grid-template-columns: 1fr;
+    gap: 28px;
+    padding: 60px 24px;
+  }
+
+  .country-post-content {
+    padding: 22px;
+    max-width: 100%;
+  }
+
+  .country-post-image-stage {
+    height: 42vh;
+  }
+
+  .country-post-image {
+    width: 240px;
+    padding: 10px 10px 36px;
+  }
+
+  .country-post-num {
+    font-size: 3rem;
   }
 
   .country-detail-close {
@@ -850,23 +902,5 @@ body.page-blogs .plane-shadow { fill: var(--aged-red-deep); opacity: 0.3; }
     left: 16px;
     padding: 12px 20px;
     font-size: 0.85rem;
-  }
-}
-
-@media (max-width: 700px) {
-  .country-detail-overlay {
-    padding: 100px 16px 60px;
-  }
-
-  .country-detail-header {
-    margin-bottom: 40px;
-  }
-
-  .country-detail-posts {
-    gap: 24px;
-  }
-
-  .country-post-content {
-    padding: 20px;
   }
 }
