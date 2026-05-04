@@ -46,14 +46,22 @@ body.page-blogs .site-footer {
 /* ─── LOADING OVERLAY ─── */
 .loading-overlay {
   position: fixed;
-  inset: 0;
-  z-index: 9999;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 99999;
   background: var(--parchment);
-  display: grid;
-  place-items: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   opacity: 1;
   visibility: visible;
+  pointer-events: all;
   transition: opacity 0.8s ease-out, visibility 0.8s ease-out;
+  isolation: isolate;
 }
 
 .loading-overlay.loaded {

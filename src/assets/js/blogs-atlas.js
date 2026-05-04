@@ -21,17 +21,35 @@ function loadScript(src) {
 }
 
 (async function init() {
+  console.log('[Atlas] Initializing...');
+
   try {
+    console.log('[Atlas] Loading GSAP libraries...');
     await loadScript(GSAP_CDN);
     await loadScript(ST_CDN);
     await loadScript(MP_CDN);
+    console.log('[Atlas] GSAP libraries loaded successfully');
   } catch (e) {
-    console.warn("GSAP failed to load — atlas animations disabled.", e);
+    console.error("[Atlas] GSAP failed to load — atlas animations disabled.", e);
+    // Even if GSAP fails, ensure loader hides
+    const loadingOverlay = document.getElementById("loading-overlay");
+    if (loadingOverlay) {
+      setTimeout(() => {
+        loadingOverlay.classList.add("loaded");
+        setTimeout(() => loadingOverlay.remove(), 800);
+      }, 1000);
+    }
     return;
   }
 
   const { gsap, ScrollTrigger, MotionPathPlugin } = window;
+  if (!gsap || !ScrollTrigger || !MotionPathPlugin) {
+    console.error("[Atlas] GSAP plugins not available");
+    return;
+  }
+
   gsap.registerPlugin(ScrollTrigger, MotionPathPlugin);
+  console.log('[Atlas] GSAP registered successfully');
 
   // ─── Pre-set every route path to be invisible ───
   document.querySelectorAll(".route, .route-glow").forEach((path) => {
@@ -187,38 +205,66 @@ function loadScript(src) {
   // ─── Hide loading overlay once everything is ready ───
   const loadingOverlay = document.getElementById("loading-overlay");
   if (loadingOverlay) {
-    // Ensure window is fully loaded AND GSAP is initialized
+    let loaderHidden = false;
+
     const hideLoader = () => {
+      if (loaderHidden) return;
+      loaderHidden = true;
+
+      console.log('[Atlas] Hiding loader - GSAP initialized, page ready');
+
       // Small delay to ensure all initial animations have started
       setTimeout(() => {
         loadingOverlay.classList.add("loaded");
         // Remove from DOM after transition completes
         setTimeout(() => {
-          loadingOverlay.remove();
+          if (loadingOverlay.parentNode) {
+            loadingOverlay.remove();
+            console.log('[Atlas] Loader removed from DOM');
+          }
         }, 800); // Match CSS transition duration
       }, 300);
     };
 
+    // Method 1: Hide when page is fully loaded
     if (document.readyState === "complete") {
       hideLoader();
     } else {
       window.addEventListener("load", hideLoader);
     }
+
+    // Method 2: Safety timeout - force hide after 5 seconds regardless
+    setTimeout(() => {
+      if (!loaderHidden) {
+        console.warn('[Atlas] Force hiding loader after timeout');
+        hideLoader();
+      }
+    }, 5000);
   }
 
   // ─── Country Detail Zoom ───
-  const countryDetailOverlay = document.getElementById("country-detail-overlay");
-  const countryDetailClose = document.getElementById("country-detail-close");
-  const snapContainer = document.querySelector(".atlas-snap");
-  const countryCtaButtons = document.querySelectorAll("[data-country-cta]");
+  try {
+    console.log('[Atlas] Setting up country detail zoom...');
 
-  countryCtaButtons.forEach(btn => {
-    btn.addEventListener("click", (e) => {
-      e.preventDefault();
-      const countryName = btn.dataset.countryCta;
-      showCountryDetail(countryName);
+    const countryDetailOverlay = document.getElementById("country-detail-overlay");
+    const countryDetailClose = document.getElementById("country-detail-close");
+    const snapContainer = document.querySelector(".atlas-snap");
+    const countryCtaButtons = document.querySelectorAll("[data-country-cta]");
+
+    console.log(`[Atlas] Found ${countryCtaButtons.length} country CTA buttons`);
+
+    countryCtaButtons.forEach((btn, idx) => {
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        const countryName = btn.dataset.countryCta;
+        console.log(`[Atlas] CTA clicked for: ${countryName}`);
+        try {
+          showCountryDetail(countryName);
+        } catch (err) {
+          console.error('[Atlas] Error showing country detail:', err);
+        }
+      });
     });
-  });
 
   if (countryDetailClose) {
     countryDetailClose.addEventListener("click", hideCountryDetail);
@@ -359,5 +405,11 @@ function loadScript(src) {
     const allDetailViews = document.querySelectorAll(".country-detail-view");
     allDetailViews.forEach(view => view.classList.remove("active"));
   }
+
+  } catch (err) {
+    console.error('[Atlas] Error in country detail setup:', err);
+  }
+
+  console.log('[Atlas] Initialization complete');
 
 })();
