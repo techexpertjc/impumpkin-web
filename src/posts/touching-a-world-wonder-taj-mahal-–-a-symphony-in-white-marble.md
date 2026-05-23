@@ -29,7 +29,7 @@ body_vi: >-
   **1. Taj Mahal – Nơi Tình Yêu Trở Thành Vĩnh Cửu**
 
 
-  Khoảnh khắc tôi bước qua cánh cổng đá sa thạch tráng lệ, Taj Mahal hiện ra trước mắt, lấp lánh như dải lụa trắng buông xuống bầu trời xanh thẳm. Trong khoảnh khắc ấy, tôi đứng lặng người; tất cả sự hỗn loạn và ồn ào đặc trưng của Ấn Độ dường như tan biến vào không trung.
+  Khoảnh khắc tôi bước qua cánh cổng đá sa thạch tráng lệ, Taj Mahal hiện ra trước mắt, lấp lánh như dải lụa trắng buông xuống bầu trời xanh. Trong khoảnh khắc ấy, tôi đứng lặng người; tất cả sự hỗn loạn và ồn ào đặc trưng của Ấn Độ dường như tan biến vào không trung.
 
 
   Nằm ở Agra, quần thể rộng lớn 17 ha này bao gồm nhiều công trình kiến ​​trúc và những khu vườn xanh tươi vang vọng tiếng chim hót. Được UNESCO công nhận là Di sản Thế giới từ năm 1983, kiệt tác này mất hơn 20 năm (1631–1648) để hoàn thành. Nó không chỉ đơn thuần là một lăng mộ bằng đá cẩm thạch trắng; mà còn là minh chứng sâu sắc cho tình yêu bất diệt của Hoàng đế Mughal Shah Jahan dành cho người vợ yêu dấu của mình.
